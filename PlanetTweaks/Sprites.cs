@@ -129,7 +129,7 @@ namespace PlanetTweaks
 
         public static string GetSpritesDirectory()
         {
-            return Path.Combine("..", "sprites");
+            return Path.Combine(".", "Mods", "PlanetTweaks", "sprites");
         }
 
         public static DirectoryInfo CreateIfNotExists(this string dirName)
