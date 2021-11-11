@@ -1,4 +1,4 @@
 .vs
-.bat
+*.bat
 PlanetTweaks/bin
 PlanetTweaks/obj
