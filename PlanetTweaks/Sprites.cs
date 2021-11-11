@@ -16,6 +16,128 @@ namespace PlanetTweaks
         public static int Size => 100;
         public static float FSize => Size;
 
+        private static Sprite redPreview;
+        public static Sprite RedPreview
+        {
+            get
+            {
+                return redPreview;
+            }
+
+            set
+            {
+                redPreview = value;
+                var planet = scrController.instance?.redPlanet;
+                if (planet == null)
+                    return;
+                var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                renderer.sprite = value;
+
+                if (value != null || redSprite == null)
+                    return;
+                renderer.sprite = redSprite;
+            }
+        }
+
+        private static Sprite bluePreview;
+        public static Sprite BluePreview
+        {
+            get
+            {
+                return bluePreview;
+            }
+
+            set
+            {
+                bluePreview = value;
+                var planet = scrController.instance?.bluePlanet;
+                if (planet == null)
+                    return;
+                var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                renderer.sprite = value;
+
+                if (value != null || blueSprite == null)
+                    return;
+                renderer.sprite = blueSprite;
+            }
+        }
+
+        private static Sprite redSprite;
+        public static Sprite RedSprite { get; }
+
+        private static Sprite blueSprite;
+        public static Sprite BlueSprite { get; }
+
+        private static int redSelected;
+        public static int RedSelected
+        {
+            get
+            {
+                return redSelected;
+            }
+
+            set
+            {
+                if (value == -1)
+                {
+                    redSelected = value;
+                    redSprite = null;
+                    var planet = scrController.instance?.redPlanet;
+                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    renderer.sprite = null;
+                    return;
+                }
+                else
+                {
+                    if (value >= sprites.Count)
+                        return;
+                    redSelected = value;
+                    redSprite = sprites.ElementAt(value).Value;
+
+                    var planet = scrController.instance?.redPlanet;
+                    if (planet == null)
+                        return;
+                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    renderer.sprite = redSprite;
+                }
+            }
+        }
+
+        private static int blueSelected;
+        public static int BlueSelected
+        {
+            get
+            {
+                return blueSelected;
+            }
+
+            set
+            {
+                if (value == -1)
+                {
+                    blueSelected = value;
+                    blueSprite = null;
+                    var planet = scrController.instance?.bluePlanet;
+                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    renderer.sprite = null;
+                    return;
+                }
+                else
+                {
+                    if (value >= sprites.Count)
+                        return;
+                    blueSelected = value;
+                    blueSprite = sprites.ElementAt(value).Value;
+
+                    var planet = scrController.instance?.bluePlanet;
+                    if (planet == null)
+                        return;
+                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    renderer.sprite = blueSprite;
+                }
+            }
+        }
+
         public static void Init()
         {
             openFileDlg = new VistaOpenFileDialog();

@@ -72,6 +72,7 @@ namespace PlayTweaks.Components
                     scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
                     scrController.instance.chosenplanet.transform.LocalMoveXY(-15, -3);
                     scrController.instance.chosenplanet.transform.position = new Vector3(-15, -3);
+                    instance.UpdateFloorIcons();
                     scrUIController.instance.WipeFromBlack();
                 });
             }));
@@ -118,11 +119,17 @@ namespace PlayTweaks.Components
                             floor.transform.DOScale(new Vector3(1, 1), 0.5f).OnComplete(delegate
                             {
                                 floor.GetPreview().gameObject.SetActive(true);
-                                // 스킨 미리보기
+                                if (scrController.instance.redPlanet.isChosen)
+                                    Sprites.BluePreview = floor.GetIcon().sprite;
+                                else
+                                    Sprites.RedPreview = floor.GetIcon().sprite;
                             }).OnKill(delegate
                             {
                                 floor.GetPreview().gameObject.SetActive(false);
-                                // 스킨 되돌리기
+                                if (scrController.instance.redPlanet.isChosen)
+                                    Sprites.BluePreview = null;
+                                else
+                                    Sprites.RedPreview = null;
                             }).SetAutoKill(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOKill(false);
@@ -146,34 +153,31 @@ namespace PlayTweaks.Components
                             floor.GetPreview().gameObject.SetActive(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOComplete(false);
-                            // 스킨 바꾸기
-                            instance.ChangePage(copyI);
+                            if (scrController.instance.redPlanet.isChosen)
+                                Sprites.BlueSelected = instance.page * 23 + copyI * 6 + copyJ;
+                            else
+                                Sprites.RedSelected = instance.page * 23 + copyI * 6 + copyJ;
                         }));
                 }
         }
 
         public void UpdateFloorIcons()
         {
-            for (int i = 0; i < 6; i++)
-                for (int j = 0; j < 4; j++) {
-                    if (i == 5 && j == 3)
-                        break;
-                    var floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
-                    floor.GetIcon().sprite = null;
-                    floor.GetName().text = null;
-                }
-            bool first = true;
-            for (int i = page * 23; i < Sprites.sprites.Count; i++)
+            var images = GameObject.Find("PlanetTweaks_Images");
+            for (int i = 0; i < images.transform.childCount - 1; i++)
             {
-                if (!first && i % 23 % 6 == 0 && i % 23 / 6 == 0)
+                var obj = images.transform.GetChild(i);
+                obj.GetIcon().sprite = null;
+                obj.GetName().text = null;
+            }
+            for (int i = 0; i < images.transform.childCount - 1; i++)
+            {
+                if (i + page * 23 >= Sprites.sprites.Count())
                     break;
-                first = false;
-                var pair = Sprites.sprites.ElementAt(i);
-                float x = -21.7f + i % 23 % 6 * 0.9f;
-                float y = -1.7f - i % 23 / 6 * 1.1f;
-                var floor = FloorUtils.GetGameObjectAt(x, y).GetComponent<scrFloor>();
-                floor.GetIcon().sprite = pair.Value;
-                floor.GetName().text = pair.Key;
+                var pair = Sprites.sprites.ElementAt(i + page * 23);
+                var obj = images.transform.GetChild(i);
+                obj.GetIcon().sprite = pair.Value;
+                obj.GetName().text = pair.Key;
             }
         }
 
@@ -243,15 +247,15 @@ namespace PlayTweaks.Components
 
             var images = new GameObject();
             images.name = "PlanetTweaks_Images";
-            for (int i = 0; i < 6; i++)
-                for (int j = 0; j < 4; j++)
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 6; j++)
                 {
                     var obj = new GameObject();
                     obj.transform.parent = images.transform;
 
-                    var floor = FloorUtils.AddFloor(-21.7f + i * 0.9f, -1.7f - j * 1.1f, obj.transform);
+                    var floor = FloorUtils.AddFloor(-21.7f + j * 0.9f, -1.7f - i * 1.1f, obj.transform);
                     floor.transform.ScaleXY(0.8f, 0.8f);
-                    if (i == 5 && j == 3)
+                    if (j == 5 && i == 3)
                         floor.isportal = true;
                     else
                     {
@@ -263,11 +267,9 @@ namespace PlayTweaks.Components
                     var name = new GameObject().AddComponent<TextMesh>();
                     name.transform.parent = obj.transform;
                     name.gameObject.GetOrAddComponent<MeshRenderer>().sortingOrder = 0;
-                    Main.Logger.Log(name.gameObject.GetComponent<MeshRenderer>().sortingLayerID.ToString());
-                    Main.Logger.Log(name.gameObject.GetComponent<MeshRenderer>().sortingLayerName.ToString());
                     name.SetLocalizedFont();
                     name.fontSize = 100;
-                    if (i == 5 && j == 3)
+                    if (j == 5 && i == 3)
                     {
                         name.text = "불러오기";
                         name.anchor = TextAnchor.MiddleCenter;
@@ -285,7 +287,7 @@ namespace PlayTweaks.Components
                     preview.fontSize = 100;
                     preview.text = "미리보기중";
                     preview.anchor = TextAnchor.MiddleRight;
-                    preview.transform.position = new Vector3(-21.7f + i * 0.9f + 0.46f, -1.7f - j * 1.1f - 0.36f);
+                    preview.transform.position = new Vector3(-21.7f + j * 0.9f + 0.46f, -1.7f - i * 1.1f - 0.36f);
                     preview.transform.ScaleXY(0.018f, 0.018f);
                     preview.gameObject.SetActive(false);
 
@@ -338,7 +340,7 @@ namespace PlayTweaks.Components
                         btnEvent.OnExited.Invoke();
                     }
 
-                    if (GUI.Button(rect, ""/*, GUIStyle.none*/))
+                    if (GUI.Button(rect, "", GUIStyle.none))
                     {
                         btnEvent.OnClicked.Invoke();
                     }

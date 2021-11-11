@@ -92,6 +92,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Patch\PlanetAwakePatch.cs" />
     <Compile Include="Patch\UpdateButtonsContainerPatch.cs" />
     <Compile Include="Utils\ComponentUtils.cs" />
     <Compile Include="Utils\FloorUtils.cs" />

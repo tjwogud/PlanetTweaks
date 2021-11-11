@@ -32,6 +32,7 @@ namespace PlanetTweaks.Patch
             textMesh.fontSize = 100;
             textMesh.transform.position = new Vector3(-15.2f, -5.29f);
             textMesh.transform.ScaleXY(0.05f, 0.05f);
+            Sprites.RedPreview = Sprites.sprites["how"];
         }
     }
 }
