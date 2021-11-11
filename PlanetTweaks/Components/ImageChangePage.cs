@@ -16,6 +16,7 @@ namespace PlayTweaks.Components
 
         public static void Init()
         {
+            // 메인메뉴로 나가기
             events.Add(new Rect(1920 - 400, 1080 - 150, 400, 150), new ButtonEvent(
             delegate
             {
@@ -45,6 +46,7 @@ namespace PlayTweaks.Components
                 scrController.deaths = 0;
                 GCS.currentSpeedTrial = 1f;
             }));
+            // 공 바꾸기
             events.Add(new Rect(1920 - 615, 1080 - 950, 600, 600), new ButtonEvent(
             delegate
             {
@@ -110,6 +112,8 @@ namespace PlayTweaks.Components
                         delegate
                         {
                             var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            if (floor.GetIcon().sprite == null)
+                                return;
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(1, 1), 0.5f).OnComplete(delegate
                             {
@@ -136,11 +140,14 @@ namespace PlayTweaks.Components
                         delegate
                         {
                             var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            if (floor.GetIcon().sprite == null)
+                                return;
                             floor.transform.DOComplete(false);
                             floor.GetPreview().gameObject.SetActive(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOComplete(false);
                             // 스킨 바꾸기
+                            instance.ChangePage(copyI);
                         }));
                 }
         }
@@ -155,10 +162,12 @@ namespace PlayTweaks.Components
                     floor.GetIcon().sprite = null;
                     floor.GetName().text = null;
                 }
+            bool first = true;
             for (int i = page * 23; i < Sprites.sprites.Count; i++)
             {
-                if (i % 23 % 6 == 5 && i / 6 == 3)
+                if (!first && i % 23 % 6 == 0 && i % 23 / 6 == 0)
                     break;
+                first = false;
                 var pair = Sprites.sprites.ElementAt(i);
                 float x = -21.7f + i % 23 % 6 * 0.9f;
                 float y = -1.7f - i % 23 / 6 * 1.1f;
@@ -166,6 +175,53 @@ namespace PlayTweaks.Components
                 floor.GetIcon().sprite = pair.Value;
                 floor.GetName().text = pair.Key;
             }
+        }
+
+        public void ChangePage(int page)
+        {
+            if (page == this.page)
+                return;
+            this.page = page;
+            changing = true;
+            bool first = true;
+            for (int i = 0; i < 6; i++)
+                for (int j = 0; j < 4; j++)
+                {
+                    if (i == 5 && j == 3)
+                        break;
+                    var floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+
+                    var fade = floor.floorRenderer.material.DOFade(0, 0.5f);
+                    floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(0, 0.5f);
+                    floor.GetIcon().material.DOFade(0, 0.5f);
+                    if (first)
+                    {
+                        first = false;
+                        fade.OnComplete(delegate
+                        {
+                            UpdateFloorIcons();
+                            first = true;
+                            for (i = 0; i < 6; i++)
+                                for (j = 0; j < 4; j++)
+                                {
+                                    if (i == 5 && j == 3)
+                                        break;
+                                    floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+                                    fade = floor.floorRenderer.material.DOFade(1, 0.5f);
+                                    floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(1, 0.5f);
+                                    floor.GetIcon().material.DOFade(1, 0.5f);
+                                    if (first)
+                                    {
+                                        first = false;
+                                        fade.OnComplete(delegate
+                                        {
+                                            changing = false;
+                                        });
+                                    }
+                                }
+                        });
+                    }
+                }
         }
 
         private bool changing = false;
@@ -197,9 +253,18 @@ namespace PlayTweaks.Components
                     floor.transform.ScaleXY(0.8f, 0.8f);
                     if (i == 5 && j == 3)
                         floor.isportal = true;
+                    else
+                    {
+                        floor.floorRenderer.renderer.sortingOrder = 1;
+                        floor.floorRenderer.renderer.sortingLayerID = 0;
+                        floor.floorRenderer.renderer.sortingLayerName = "Default";
+                    }
 
                     var name = new GameObject().AddComponent<TextMesh>();
                     name.transform.parent = obj.transform;
+                    name.gameObject.GetOrAddComponent<MeshRenderer>().sortingOrder = 0;
+                    Main.Logger.Log(name.gameObject.GetComponent<MeshRenderer>().sortingLayerID.ToString());
+                    Main.Logger.Log(name.gameObject.GetComponent<MeshRenderer>().sortingLayerName.ToString());
                     name.SetLocalizedFont();
                     name.fontSize = 100;
                     if (i == 5 && j == 3)
@@ -215,6 +280,7 @@ namespace PlayTweaks.Components
 
                     var preview = new GameObject().AddComponent<TextMesh>();
                     preview.transform.parent = obj.transform;
+                    preview.gameObject.GetOrAddComponent<MeshRenderer>().sortingOrder = 3;
                     preview.SetLocalizedFont();
                     preview.fontSize = 100;
                     preview.text = "미리보기중";
@@ -225,6 +291,7 @@ namespace PlayTweaks.Components
 
                     var icon = new GameObject().AddComponent<SpriteRenderer>();
                     icon.transform.parent = obj.transform;
+                    icon.sortingOrder = 2;
                     icon.transform.position = floor.transform.position;
                     icon.transform.ScaleXY(0.7f, 0.7f);
                 }
@@ -271,7 +338,7 @@ namespace PlayTweaks.Components
                         btnEvent.OnExited.Invoke();
                     }
 
-                    if (GUI.Button(rect, "", GUIStyle.none))
+                    if (GUI.Button(rect, ""/*, GUIStyle.none*/))
                     {
                         btnEvent.OnClicked.Invoke();
                     }
