@@ -31,6 +31,8 @@ namespace PlanetTweaks
                 if (planet == null)
                     return;
                 var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                renderer.enabled = true;
+                renderer.transform.position = planet.transform.position;
                 renderer.sprite = value;
 
                 if (value != null || redSprite == null)
@@ -54,6 +56,8 @@ namespace PlanetTweaks
                 if (planet == null)
                     return;
                 var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                renderer.enabled = true;
+                renderer.transform.position = planet.transform.position;
                 renderer.sprite = value;
 
                 if (value != null || blueSprite == null)
@@ -68,7 +72,7 @@ namespace PlanetTweaks
         private static Sprite blueSprite;
         public static Sprite BlueSprite { get; }
 
-        private static int redSelected;
+        private static int redSelected = -1;
         public static int RedSelected
         {
             get
@@ -78,12 +82,12 @@ namespace PlanetTweaks
 
             set
             {
-                if (value == -1)
+                if (value < 0)
                 {
                     redSelected = value;
                     redSprite = null;
                     var planet = scrController.instance?.redPlanet;
-                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
                     renderer.sprite = null;
                     return;
                 }
@@ -97,13 +101,15 @@ namespace PlanetTweaks
                     var planet = scrController.instance?.redPlanet;
                     if (planet == null)
                         return;
-                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
+                    renderer.enabled = true;
+                    renderer.transform.position = planet.transform.position;
                     renderer.sprite = redSprite;
                 }
             }
         }
 
-        private static int blueSelected;
+        private static int blueSelected = -1;
         public static int BlueSelected
         {
             get
@@ -113,12 +119,12 @@ namespace PlanetTweaks
 
             set
             {
-                if (value == -1)
+                if (value < 0)
                 {
                     blueSelected = value;
                     blueSprite = null;
                     var planet = scrController.instance?.bluePlanet;
-                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
                     renderer.sprite = null;
                     return;
                 }
@@ -132,7 +138,9 @@ namespace PlanetTweaks
                     var planet = scrController.instance?.bluePlanet;
                     if (planet == null)
                         return;
-                    var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
+                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
+                    renderer.enabled = true;
+                    renderer.transform.position = planet.transform.position;
                     renderer.sprite = blueSprite;
                 }
             }

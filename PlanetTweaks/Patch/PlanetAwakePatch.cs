@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace PlanetTweaks.Patch
@@ -9,11 +10,17 @@ namespace PlanetTweaks.Patch
         public static void Postfix(scrPlanet __instance)
         {
             var renderer = new GameObject().AddComponent<SpriteRenderer>();
-            SpriteRenderer faceRenderer = __instance.faceDetails;
-            renderer.sortingOrder = faceRenderer.sortingOrder + 1;
-            renderer.sortingLayerID = faceRenderer.sortingLayerID;
-            renderer.sortingLayerName = faceRenderer.sortingLayerName;
+            renderer.sortingOrder = 999;
+            renderer.sortingLayerID = __instance.faceDetails.sortingLayerID;
+            renderer.sortingLayerName = __instance.faceDetails.sortingLayerName;
             renderer.transform.parent = __instance.transform;
+            Task.Delay(100).ContinueWith(delegate
+            {
+                if (__instance.isRed)
+                    Sprites.RedSelected = Sprites.RedSelected;
+                else
+                    Sprites.BlueSelected = Sprites.BlueSelected;
+            });
         }
     }
 }

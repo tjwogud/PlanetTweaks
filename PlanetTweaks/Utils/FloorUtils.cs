@@ -7,27 +7,24 @@ namespace PlanetTweaks.Utils
     {
         public static scrFloor AddFloor(float x, float y, Transform parent = null)
         {
-            var outer = GameObject.Find("outer ring");
-            var obj = Object.Instantiate(GetGameObjectAt(0, -20).GetComponent<scrFloor>(), parent ?? outer.transform);
+            var obj = Object.Instantiate(GetGameObjectAt(0, -20).GetComponent<scrFloor>(), parent);
             obj.transform.position = new Vector3(x, y);
             return obj;
         }
 
         public static scrFloor AddFloorAt(float floorX, float floorY, float x, float y, Transform parent = null)
         {
-            var outer = GameObject.Find("outer ring");
             var floor = GetGameObjectAt(floorX, floorY)?.GetComponent<scrFloor>();
             if (floor == null)
                 return null;
-            var obj = Object.Instantiate(floor, parent ?? outer.transform);
+            var obj = Object.Instantiate(floor, parent);
             obj.transform.position = new Vector3(x, y);
             return obj;
         }
 
         public static scrFloor AddEventFloor(float x, float y, QuickAction action, Transform parent = null)
         {
-            var outer = GameObject.Find("outer ring");
-            var obj = Object.Instantiate(GetGameObjectAt(0, -3).GetComponent<scrFloor>(), parent ?? outer.transform);
+            var obj = Object.Instantiate(GetGameObjectAt(0, -3).GetComponent<scrFloor>(), parent);
             Object.Destroy(obj.GetComponent<ffxCallFunction>());
             obj.transform.position = new Vector3(x, y);
             obj.transform.Find("SpecIcon").gameObject.SetActive(false);
