@@ -1,9 +1,7 @@
-﻿using DG.Tweening;
-using HarmonyLib;
+﻿using HarmonyLib;
 using PlanetTweaks.Utils;
 using PlayTweaks.Components;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace PlanetTweaks.Patch
 {
@@ -15,9 +13,7 @@ namespace PlanetTweaks.Patch
             FloorUtils.AddTeleportFloor(-2, -3, -15, -3, -18, -3.5f, false, action2: delegate
             {
                 if (scrController.instance.redPlanet.isChosen)
-                {
                     scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
-                }
                 scrController.instance.camy.zoomSize = 0.5f;
                 scrController.instance.camy.isPulsingOnHit = false;
                 new GameObject().AddComponent<ImageChangePage>();
@@ -25,17 +21,10 @@ namespace PlanetTweaks.Patch
 
             FloorUtils.AddEventFloor(-15, -3, null);
 
-            var textMesh = new GameObject().AddComponent<TextMesh>();
-            textMesh.text = "나가기";
-            textMesh.SetLocalizedFont();
-            textMesh.fontSize = 100;
-            textMesh.transform.position = new Vector3(-15.2f, -5.29f);
-            textMesh.transform.ScaleXY(0.05f, 0.05f);
-
             var exitFloor = FloorUtils.AddFloor(-13.9f, -5.65f);
             exitFloor.transform.ScaleXY(0.5f, 0.5f);
             exitFloor.isportal = true;
-            exitFloor.Start();
+            exitFloor.dontChangeMySprite = true;
 
             var images = new GameObject();
             images.name = "PlanetTweaks_Images";
@@ -47,7 +36,7 @@ namespace PlanetTweaks.Patch
 
                     var floor = FloorUtils.AddFloor(-21.7f + j * 0.9f, -1.7f - i * 1.1f, obj.transform);
                     floor.transform.ScaleXY(0.8f, 0.8f);
-                    floor.Start();
+                    floor.dontChangeMySprite = true;
                     if (j == 5 && i == 3)
                         floor.isportal = true;
                     else

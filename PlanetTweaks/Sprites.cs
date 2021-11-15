@@ -12,7 +12,8 @@ namespace PlanetTweaks
     {
         public static Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
         public static string[] imageFiles = new string[] { ".png", ".jpg", ".jpeg" };
-        private static VistaOpenFileDialog openFileDlg;
+        private static VistaOpenFileDialog fileDialog;
+        private static VistaFolderBrowserDialog dirDialog;
         public static int Size => 100;
         public static float FSize => Size;
 
@@ -35,9 +36,9 @@ namespace PlanetTweaks
                 renderer.transform.position = planet.transform.position;
                 renderer.sprite = value;
 
-                if (value != null || redSprite == null)
+                if (value != null || RedSprite == null)
                     return;
-                renderer.sprite = redSprite;
+                renderer.sprite = RedSprite;
             }
         }
 
@@ -60,32 +61,24 @@ namespace PlanetTweaks
                 renderer.transform.position = planet.transform.position;
                 renderer.sprite = value;
 
-                if (value != null || blueSprite == null)
+                if (value != null || BlueSprite == null)
                     return;
-                renderer.sprite = blueSprite;
+                renderer.sprite = BlueSprite;
             }
         }
 
-        private static Sprite redSprite;
-        public static Sprite RedSprite { get; }
-
-        private static Sprite blueSprite;
-        public static Sprite BlueSprite { get; }
-
-        private static int redSelected = -1;
+        public static Sprite RedSprite { get; private set; }
+        public static Sprite BlueSprite { get; private set; }
         public static int RedSelected
         {
-            get
-            {
-                return redSelected;
-            }
+            get => Main.Settings.redSelected;
 
             set
             {
                 if (value < 0)
                 {
-                    redSelected = value;
-                    redSprite = null;
+                    Main.Settings.redSelected = value;
+                    RedSprite = null;
                     var planet = scrController.instance?.redPlanet;
                     var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
                     renderer.sprite = null;
@@ -95,8 +88,8 @@ namespace PlanetTweaks
                 {
                     if (value >= sprites.Count)
                         return;
-                    redSelected = value;
-                    redSprite = sprites.ElementAt(value).Value;
+                    Main.Settings.redSelected = value;
+                    RedSprite = sprites.ElementAt(value).Value;
 
                     var planet = scrController.instance?.redPlanet;
                     if (planet == null)
@@ -104,25 +97,20 @@ namespace PlanetTweaks
                     var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
                     renderer.enabled = true;
                     renderer.transform.position = planet.transform.position;
-                    renderer.sprite = redSprite;
+                    renderer.sprite = RedSprite;
                 }
             }
         }
-
-        private static int blueSelected = -1;
         public static int BlueSelected
         {
-            get
-            {
-                return blueSelected;
-            }
+            get => Main.Settings.blueSelected;
 
             set
             {
                 if (value < 0)
                 {
-                    blueSelected = value;
-                    blueSprite = null;
+                    Main.Settings.blueSelected = value;
+                    BlueSprite = null;
                     var planet = scrController.instance?.bluePlanet;
                     var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
                     renderer.sprite = null;
@@ -132,8 +120,8 @@ namespace PlanetTweaks
                 {
                     if (value >= sprites.Count)
                         return;
-                    blueSelected = value;
-                    blueSprite = sprites.ElementAt(value).Value;
+                    Main.Settings.blueSelected = value;
+                    BlueSprite = sprites.ElementAt(value).Value;
 
                     var planet = scrController.instance?.bluePlanet;
                     if (planet == null)
@@ -141,32 +129,52 @@ namespace PlanetTweaks
                     var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
                     renderer.enabled = true;
                     renderer.transform.position = planet.transform.position;
-                    renderer.sprite = blueSprite;
+                    renderer.sprite = BlueSprite;
                 }
             }
         }
 
         public static void Init()
         {
-            openFileDlg = new VistaOpenFileDialog();
+            fileDialog = new VistaOpenFileDialog();
             var filesEnumerable = from string str in imageFiles select "*" + str;
             string files = string.Join(";", filesEnumerable);
-            openFileDlg.Filter = "Image Files(" + files + ")|" + files;
-            openFileDlg.Multiselect = false;
+            fileDialog.Filter = "Image Files(" + files + ")|" + files;
+            fileDialog.Multiselect = false;
+
+            dirDialog = new VistaFolderBrowserDialog();
+            dirDialog.SelectedPath = Main.Settings.spriteDirectory;
         }
 
         public static string ShowOpenFileDialog()
         {
-            DialogResult result = openFileDlg.ShowDialog();
+            DialogResult result = fileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
                 try
                 {
-                    return openFileDlg.FileName;
+                    return fileDialog.FileName;
                 }
                 catch (Exception e)
                 {
-                    Main.Logger.Log(e.Message);
+                    Main.Logger.Log(e.StackTrace);
+                }
+            }
+            return null;
+        }
+
+        public static string ShowFolderBrowserDialog()
+        {
+            DialogResult result = dirDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    return dirDialog.SelectedPath;
+                }
+                catch (Exception e)
+                {
+                    Main.Logger.Log(e.StackTrace);
                 }
             }
             return null;
@@ -174,8 +182,7 @@ namespace PlanetTweaks
 
         public static void Load()
         {
-            DirectoryInfo dir = GetSpritesDirectory().CreateIfNotExists();
-            sprites.Clear();
+            DirectoryInfo dir = Main.Settings.spriteDirectory.CreateIfNotExists();
             foreach (FileInfo file in dir.GetFiles())
             {
                 try
@@ -190,7 +197,7 @@ namespace PlanetTweaks
 
         public static void Save()
         {
-            DirectoryInfo dir = GetSpritesDirectory().CreateIfNotExists();
+            DirectoryInfo dir = Main.Settings.spriteDirectory.CreateIfNotExists();
             foreach (FileInfo file in dir.GetFiles())
             {
                 if (!file.Name.IsImageFile())
@@ -255,11 +262,6 @@ namespace PlanetTweaks
             result.SetPixels(pixels, 0);
             result.Apply();
             return result;
-        }
-
-        public static string GetSpritesDirectory()
-        {
-            return Path.Combine(".", "Mods", "PlanetTweaks", "sprites");
         }
 
         public static DirectoryInfo CreateIfNotExists(this string dirName)

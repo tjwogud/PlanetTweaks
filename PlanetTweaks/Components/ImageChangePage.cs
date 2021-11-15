@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityModManagerNet;
 
 namespace PlayTweaks.Components
 {
@@ -14,8 +15,85 @@ namespace PlayTweaks.Components
     {
         public static ImageChangePage instance;
 
+        public static Sprite pageBtnNormal;
+        public static Sprite pageBtnEntered;
+        public static Sprite pageBtnDisabled;
+
         public static void Init()
         {
+            // 페이지 버튼 그리기
+            {
+                int size = 50;
+                Color transparent = new Color(0, 0, 0, 0);
+                Color lightGray = new Color(0.9f, 0.9f, 0.9f);
+                {
+                    var texture = new Texture2D(size, size);
+                    for (int i = 0; i < size; i++)
+                        for (int j = 0; j < size; j++)
+                            if (j >= size / 2 - 1 - i / 2 && j <= size / 2 + i / 2)
+                                texture.SetPixel(j, i, Color.white);
+                            else
+                                texture.SetPixel(j, i, transparent);
+                    texture.Apply();
+                    pageBtnNormal = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
+                }
+                {
+                    var texture = new Texture2D(size, size);
+                    for (int i = 0; i < size; i++)
+                        for (int j = 0; j < size; j++)
+                            if (j >= size / 2 - 1 - i / 2 && j <= size / 2 + i / 2)
+                                texture.SetPixel(j, i, lightGray);
+                            else
+                                texture.SetPixel(j, i, transparent);
+                    texture.Apply();
+                    pageBtnEntered = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
+                }
+                {
+                    var texture = new Texture2D(size, size);
+                    for (int i = 0; i < size; i++)
+                        for (int j = 0; j < size; j++)
+                            if (j >= size / 2 - 1 - i / 2 && j <= size / 2 + i / 2)
+                                texture.SetPixel(j, i, Color.gray);
+                            else
+                                texture.SetPixel(j, i, transparent);
+                    texture.Apply();
+                    pageBtnDisabled = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
+                }
+            }
+            // 왼쪽 페이지 버튼
+            events.Add(new Rect(18, 86, 43, 44), new ButtonEvent(
+            delegate
+            {
+                if (instance.page == 0)
+                    return;
+                instance.leftPageBtn.sprite = pageBtnEntered;
+            },
+            delegate
+            {
+                if (instance.page == 0)
+                    return;
+                instance.leftPageBtn.sprite = pageBtnNormal;
+            },
+            delegate
+            {
+                if (instance.page == 0)
+                    return;
+                instance.ChangePage(instance.page - 1);
+            }));
+            // 오른쪽 페이지 버튼
+            events.Add(new Rect(1232, 86, 43, 44), new ButtonEvent(
+            delegate
+            {
+                instance.rightPageBtn.sprite = pageBtnEntered;
+            },
+            delegate
+            {
+                instance.rightPageBtn.sprite = pageBtnNormal;
+            },
+            delegate
+            {
+                instance.ChangePage(instance.page + 1);
+            }));
             // 메인메뉴로 나가기
             events.Add(new Rect(1920 - 400, 1080 - 150, 400, 150), new ButtonEvent(
             delegate
@@ -73,7 +151,9 @@ namespace PlayTweaks.Components
                     scrUIController.instance.WipeFromBlack();
                 });
             }));
+            // 이미지 타일들
             for (int i = 0; i < 6; i++)
+            {
                 for (int j = 0; j < 4; j++)
                 {
                     int copyI = i;
@@ -99,7 +179,8 @@ namespace PlayTweaks.Components
                             {
                                 Sprites.Add(file);
                                 instance.UpdateFloorIcons();
-                            } catch (Exception e)
+                            }
+                            catch (Exception e)
                             {
                                 Main.Logger.Log("wrong file '" + file + "'!");
                                 Main.Logger.Log(e.StackTrace);
@@ -115,6 +196,8 @@ namespace PlayTweaks.Components
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(1, 1), 0.5f).OnComplete(delegate
                             {
+                                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == instance.page * 23 + copyJ * 6 + copyI)
+                                    return;
                                 floor.GetPreview().gameObject.SetActive(true);
                                 if (scrController.instance.redPlanet.isChosen)
                                     Sprites.BluePreview = floor.GetIcon().sprite;
@@ -148,12 +231,25 @@ namespace PlayTweaks.Components
                             floor.GetPreview().gameObject.SetActive(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOComplete(false);
-                            if (scrController.instance.redPlanet.isChosen)
-                                Sprites.BlueSelected = instance.page * 23 + copyJ * 6 + copyI;
+                            int index = instance.page * 23 + copyJ * 6 + copyI;
+                            if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == index)
+                            {
+                                if (scrController.instance.redPlanet.isChosen)
+                                    Sprites.BlueSelected = -1;
+                                else
+                                    Sprites.RedSelected = -1;
+                            }
                             else
-                                Sprites.RedSelected = instance.page * 23 + copyJ * 6 + copyI;
+                            {
+                                if (scrController.instance.redPlanet.isChosen)
+                                    Sprites.BlueSelected = index;
+                                else
+                                    Sprites.RedSelected = index;
+                            }
+                            instance.UpdateFloorIcons();
                         }));
                 }
+            }
         }
 
         public void UpdateFloorIcons()
@@ -164,6 +260,14 @@ namespace PlayTweaks.Components
                 var obj = images.transform.GetChild(i);
                 obj.GetIcon().sprite = null;
                 obj.GetName().text = null;
+                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == i + page * 23)
+                {
+                    obj.GetFloor().SetTileColor(Color.yellow);
+                }
+                else
+                {
+                    obj.GetFloor().SetTileColor(Color.white);
+                }
             }
             for (int i = 0; i < images.transform.childCount - 1; i++)
             {
@@ -174,6 +278,13 @@ namespace PlayTweaks.Components
                 obj.GetIcon().sprite = pair.Value;
                 obj.GetName().text = pair.Key;
             }
+            pageText.text = page + 1 + "페이지";
+            if (page == 0)
+                leftPageBtn.sprite = pageBtnDisabled;
+            else if (new Rect(18, 86, 43, 44).Contains(Event.current.mousePosition))
+                leftPageBtn.sprite = pageBtnEntered;
+            else
+                leftPageBtn.sprite = pageBtnNormal;
         }
 
         public void ChangePage(int page)
@@ -227,11 +338,42 @@ namespace PlayTweaks.Components
 
         private int page = 0;
 
+        public TextMesh pageText;
+        public SpriteRenderer leftPageBtn;
+        public SpriteRenderer rightPageBtn;
+
         public void Awake()
         {
             if (instance != null)
                 Destroy(instance.gameObject);
             instance = this;
+
+            var exit = new GameObject().AddComponent<TextMesh>();
+            exit.text = "나가기";
+            exit.SetLocalizedFont();
+            exit.fontSize = 100;
+            exit.transform.position = new Vector3(-15.2f, -5.29f);
+            exit.transform.ScaleXY(0.05f, 0.05f);
+
+            pageText = new GameObject().AddComponent<TextMesh>();
+            pageText.text = "1페이지";
+            pageText.SetLocalizedFont();
+            pageText.fontSize = 100;
+            pageText.transform.position = new Vector3(-22, -1.03f);
+            pageText.transform.ScaleXY(0.02f, 0.02f);
+
+            leftPageBtn = new GameObject().AddComponent<SpriteRenderer>();
+            leftPageBtn.sprite = pageBtnNormal;
+            leftPageBtn.transform.Rotate(0, 0, -90);
+            leftPageBtn.transform.position = new Vector3(-22.26f, -1.5f);
+            leftPageBtn.transform.ScaleXY(0.4f, 0.4f);
+
+            rightPageBtn = new GameObject().AddComponent<SpriteRenderer>();
+            rightPageBtn.sprite = pageBtnNormal;
+            rightPageBtn.transform.Rotate(0, 0, 90);
+            rightPageBtn.transform.position = new Vector3(-16.64f, -1.5f);
+            rightPageBtn.transform.ScaleXY(0.4f, 0.4f);
+
             instance.UpdateFloorIcons();
         }
 
@@ -239,7 +381,7 @@ namespace PlayTweaks.Components
 
         public void OnGUI()
         {
-            if (scrController.instance.paused || changing)
+            if (scrController.instance.paused)
                 return;
 
             HandleButtonEvent();
@@ -253,7 +395,7 @@ namespace PlayTweaks.Components
             instance = null;
         }
 
-        public static void HandleButtonEvent()
+        public void HandleButtonEvent()
         {
             Vector2 mouse = Event.current.mousePosition;
 
@@ -266,8 +408,11 @@ namespace PlayTweaks.Components
 
                     if (!btnEvent.Entered && rect.Contains(mouse))
                     {
-                        btnEvent.Entered = true;
-                        btnEvent.OnEntered.Invoke();
+                        if (!changing && !UnityModManager.UI.Instance.Opened)
+                        {
+                            btnEvent.Entered = true;
+                            btnEvent.OnEntered.Invoke();
+                        }
                     }
                     else if (btnEvent.Entered && !rect.Contains(mouse))
                     {
@@ -275,10 +420,9 @@ namespace PlayTweaks.Components
                         btnEvent.OnExited.Invoke();
                     }
 
-                    if (GUI.Button(rect, "", GUIStyle.none))
-                    {
-                        btnEvent.OnClicked.Invoke();
-                    }
+                    if (!changing && !UnityModManager.UI.Instance.Opened)
+                        if (GUI.Button(rect, "", GUIStyle.none))
+                            btnEvent.OnClicked.Invoke();
                 }
                 catch (Exception)
                 {

@@ -8,7 +8,6 @@ namespace PlanetTweaks.Patch
     [HarmonyPatch(typeof(PauseMenu), "UpdateButtonsContainer")]
     public static class UpdateButtonsContainerPatch
     {
-
         public static bool Prefix(PauseMenu __instance)
         {
             __instance.buttonsContainer.ScaleXY(1f);
