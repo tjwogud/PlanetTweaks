@@ -71,13 +71,24 @@ namespace PlanetTweaks
         public static Sprite BlueSprite { get; private set; }
         public static int RedSelected
         {
-            get => Main.Settings.redSelected;
+            get
+            {
+                if (Main.Settings.redSelected == null)
+                    return -1;
+                if (sprites.ContainsKey(Main.Settings.redSelected))
+                    return sprites.Keys.ToList().IndexOf(Main.Settings.redSelected);
+                else
+                {
+                    Main.Settings.redSelected = null;
+                    return -1;
+                }
+            }
 
             set
             {
                 if (value < 0)
                 {
-                    Main.Settings.redSelected = value;
+                    Main.Settings.redSelected = null;
                     RedSprite = null;
                     var planet = scrController.instance?.redPlanet;
                     var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
@@ -88,7 +99,7 @@ namespace PlanetTweaks
                 {
                     if (value >= sprites.Count)
                         return;
-                    Main.Settings.redSelected = value;
+                    Main.Settings.redSelected = sprites.Keys.ElementAt(value);
                     RedSprite = sprites.ElementAt(value).Value;
 
                     var planet = scrController.instance?.redPlanet;
@@ -103,13 +114,24 @@ namespace PlanetTweaks
         }
         public static int BlueSelected
         {
-            get => Main.Settings.blueSelected;
+            get
+            {
+                if (Main.Settings.blueSelected == null)
+                    return -1;
+                if (sprites.ContainsKey(Main.Settings.blueSelected))
+                    return sprites.Keys.ToList().IndexOf(Main.Settings.blueSelected);
+                else
+                {
+                    Main.Settings.blueSelected = null;
+                    return -1;
+                }
+            }
 
             set
             {
                 if (value < 0)
                 {
-                    Main.Settings.blueSelected = value;
+                    Main.Settings.blueSelected = null;
                     BlueSprite = null;
                     var planet = scrController.instance?.bluePlanet;
                     var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
@@ -120,7 +142,7 @@ namespace PlanetTweaks
                 {
                     if (value >= sprites.Count)
                         return;
-                    Main.Settings.blueSelected = value;
+                    Main.Settings.blueSelected = sprites.Keys.ElementAt(value);
                     BlueSprite = sprites.ElementAt(value).Value;
 
                     var planet = scrController.instance?.bluePlanet;
@@ -239,6 +261,25 @@ namespace PlanetTweaks
                 name = first + i;
             sprite.name = name;
             sprites.Add(name, sprite);
+        }
+
+        public static bool Remove(string name)
+        {
+            if (!sprites.ContainsKey(name))
+                return false;
+            if (Main.Settings.redSelected == name)
+                RedSelected = -1;
+            if (Main.Settings.blueSelected == name)
+                BlueSelected = -1;
+            sprites.Remove(name);
+            return true;
+        }
+
+        public static bool Remove(int index)
+        {
+            if (index < 0 || index >= sprites.Count())
+                return false;
+            return Remove(sprites.Keys.ElementAt(index));
         }
 
         public static Texture2D ResizeFix(this Texture2D texture)

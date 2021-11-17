@@ -13,8 +13,8 @@ namespace PlanetTweaks
                 new XmlSerializer(GetType()).Serialize(writer, this);
         }
 
-        public int redSelected = -1;
-        public int blueSelected = -1;
+        public string redSelected = null;
+        public string blueSelected = null;
         public string spriteDirectory = Path.Combine(".", "Mods", "PlanetTweaks", "sprites");
     }
 }

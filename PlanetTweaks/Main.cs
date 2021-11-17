@@ -76,6 +76,9 @@ namespace PlanetTweaks
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
         {
+            Logger.Log("Saving Settings...");
+            Settings.Save(modEntry);
+            Logger.Log("Save Completed!");
             Logger.Log("Saving Sprites...");
             Sprites.Save();
             Logger.Log("Save Completed!");

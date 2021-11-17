@@ -147,6 +147,10 @@ namespace PlayTweaks.Components
                     scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
                     scrController.instance.chosenplanet.transform.LocalMoveXY(-15, -3);
                     scrController.instance.chosenplanet.transform.position = new Vector3(-15, -3);
+                    if (scrController.instance.chosenplanet.isRed)
+                        instance.planetText.text = "<color=" + Persistence.GetPlayerColor(false).ToHex() + ">얼음 행성</color> 선택됨";
+                    else
+                        instance.planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
                     instance.UpdateFloorIcons();
                     scrUIController.instance.WipeFromBlack();
                 });
@@ -232,20 +236,31 @@ namespace PlayTweaks.Components
                             var sprite = floor.GetIcon();
                             sprite.transform.DOComplete(false);
                             int index = instance.page * 23 + copyJ * 6 + copyI;
-                            if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == index)
-                            {
-                                if (scrController.instance.redPlanet.isChosen)
-                                    Sprites.BlueSelected = -1;
+                            if (Input.GetMouseButtonUp(0))
+                                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == index)
+                                {
+                                    if (scrController.instance.redPlanet.isChosen)
+                                        Sprites.BlueSelected = -1;
+                                    else
+                                        Sprites.RedSelected = -1;
+                                }
                                 else
-                                    Sprites.RedSelected = -1;
+                                {
+                                    if (scrController.instance.redPlanet.isChosen)
+                                        Sprites.BlueSelected = index;
+                                    else
+                                        Sprites.RedSelected = index;
+                                }
+                            else if (Input.GetMouseButtonUp(1))
+                            {
+                                Sprites.Remove(index);
+                                if (scrController.instance.redPlanet.isChosen)
+                                    Sprites.BluePreview = null;
+                                else
+                                    Sprites.RedPreview = null;
                             }
                             else
-                            {
-                                if (scrController.instance.redPlanet.isChosen)
-                                    Sprites.BlueSelected = index;
-                                else
-                                    Sprites.RedSelected = index;
-                            }
+                                return;
                             instance.UpdateFloorIcons();
                         }));
                 }
@@ -261,13 +276,9 @@ namespace PlayTweaks.Components
                 obj.GetIcon().sprite = null;
                 obj.GetName().text = null;
                 if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == i + page * 23)
-                {
                     obj.GetFloor().SetTileColor(Color.yellow);
-                }
                 else
-                {
                     obj.GetFloor().SetTileColor(Color.white);
-                }
             }
             for (int i = 0; i < images.transform.childCount - 1; i++)
             {
@@ -338,6 +349,7 @@ namespace PlayTweaks.Components
 
         private int page = 0;
 
+        public TextMesh planetText;
         public TextMesh pageText;
         public SpriteRenderer leftPageBtn;
         public SpriteRenderer rightPageBtn;
@@ -347,6 +359,14 @@ namespace PlayTweaks.Components
             if (instance != null)
                 Destroy(instance.gameObject);
             instance = this;
+
+            planetText = new GameObject().AddComponent<TextMesh>();
+            planetText.richText = true;
+            planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
+            planetText.SetLocalizedFont();
+            planetText.fontSize = 100;
+            planetText.transform.position = new Vector3(-16.3f, -4.4f);
+            planetText.transform.ScaleXY(0.05f, 0.05f);
 
             var exit = new GameObject().AddComponent<TextMesh>();
             exit.text = "나가기";
