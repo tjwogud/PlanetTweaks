@@ -304,44 +304,42 @@ namespace PlayTweaks.Components
                 return;
             this.page = page;
             changing = true;
-            bool first = true;
+            scrFloor floor = null;
+            Tween fade = null;
             for (int i = 0; i < 6; i++)
                 for (int j = 0; j < 4; j++)
                 {
                     if (i == 5 && j == 3)
-                        break;
-                    var floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
-
-                    var fade = floor.floorRenderer.material.DOFade(0, 0.5f);
-                    floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(0, 0.5f);
-                    floor.GetIcon().material.DOFade(0, 0.5f);
-                    if (first)
                     {
-                        first = false;
                         fade.OnComplete(delegate
                         {
                             UpdateFloorIcons();
-                            first = true;
                             for (i = 0; i < 6; i++)
                                 for (j = 0; j < 4; j++)
                                 {
                                     if (i == 5 && j == 3)
-                                        break;
-                                    floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
-                                    fade = floor.floorRenderer.material.DOFade(1, 0.5f);
-                                    floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(1, 0.5f);
-                                    floor.GetIcon().material.DOFade(1, 0.5f);
-                                    if (first)
                                     {
-                                        first = false;
                                         fade.OnComplete(delegate
                                         {
                                             changing = false;
                                         });
+                                        break;
                                     }
+                                    floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+                                    var fr2 = floor.floorRenderer;
+                                    fr2.color = new Color(fr2.color.r, fr2.color.b, fr2.color.g, 0);
+                                    fade = DOTween.ToAlpha(() => fr2.color, c => fr2.color = c, 1, 0.5f);
+                                    floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(1, 0.5f);
+                                    floor.GetIcon().material.DOFade(1, 0.5f);
                                 }
                         });
+                        break;
                     }
+                    floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+                    var fr = floor.floorRenderer;
+                    fade = DOTween.ToAlpha(() => fr.color, c => fr.color = c, 0, 0.5f);
+                    floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(0, 0.5f);
+                    floor.GetIcon().material.DOFade(0, 0.5f);
                 }
         }
 
@@ -419,12 +417,12 @@ namespace PlayTweaks.Components
         {
             Vector2 mouse = Event.current.mousePosition;
 
-            foreach (var key in events.Keys)
+            foreach (var pair in events)
             {
                 try
                 {
-                    var rect = key.Fix();
-                    var btnEvent = events[rect];
+                    var rect = pair.Key.Fix();
+                    var btnEvent = pair.Value;
 
                     if (!btnEvent.Entered && rect.Contains(mouse))
                     {

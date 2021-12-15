@@ -8,7 +8,7 @@ namespace PlanetTweaks.Utils
         {
             float xMultiply = (float)Screen.width / width;
             float yMultiply = (float)Screen.height / height;
-            Rect newRect = new Rect(rect);
+            Rect newRect = new Rect(rect.x, rect.y, rect.width, rect.height);
             newRect.x *= xMultiply;
             newRect.y *= yMultiply;
             newRect.width *= xMultiply;
