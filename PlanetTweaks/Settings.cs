@@ -16,5 +16,7 @@ namespace PlanetTweaks
         public string redSelected = null;
         public string blueSelected = null;
         public string spriteDirectory = Path.Combine(".", "Mods", "PlanetTweaks", "sprites");
+        public float redSize = 1;
+        public float blueSize = 1;
     }
 }
