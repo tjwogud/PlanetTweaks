@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using PlayTweaks.Components;
+using System;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityModManagerNet;
@@ -46,6 +48,8 @@ namespace PlanetTweaks
 
         private static GUIStyle labelStyle;
         private static GUIStyle btnStyle;
+        private static GUIStyle sliderStyle;
+        private static GUIStyle tfStyle;
 
         private static void OnGUI(UnityModManager.ModEntry modEntry)
         {
@@ -58,6 +62,16 @@ namespace PlanetTweaks
             {
                 btnStyle = new GUIStyle(GUI.skin.button);
                 btnStyle.fixedWidth = 70;
+            }
+            if (sliderStyle == null)
+            {
+                sliderStyle = new GUIStyle(GUI.skin.horizontalSlider);
+                sliderStyle.fixedWidth = 600;
+            }
+            if (tfStyle == null)
+            {
+                tfStyle = new GUIStyle(GUI.skin.textField);
+                tfStyle.fixedWidth = 75;
             }
             GUILayout.Label("이미지 폴더 경로", labelStyle);
             GUILayout.BeginHorizontal();
@@ -72,6 +86,56 @@ namespace PlanetTweaks
             }
             GUILayout.Label(Settings.spriteDirectory);
             GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+            GUILayout.Label("불 행성 이미지 크기", labelStyle);
+            GUILayout.BeginHorizontal();
+            bool redChange = false;
+            float redSize = GUILayout.HorizontalSlider(Settings.redSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
+            if (redSize != Settings.redSize)
+                redChange = true;
+            if (redChange)
+                GUILayout.TextField($"{Settings.redSize}", tfStyle);
+            else
+                try
+                {
+                    redSize = Convert.ToSingle(GUILayout.TextField($"{Settings.redSize}", tfStyle));
+                    if (!(redSize > 2 || redSize < 0))
+                        if (redSize != Settings.redSize)
+                            redChange = true;
+                } catch (Exception) {
+                }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+            GUILayout.Label("얼음 행성 이미지 크기", labelStyle);
+            GUILayout.BeginHorizontal();
+            bool blueChange = false;
+            float blueSize = GUILayout.HorizontalSlider(Settings.blueSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
+            if (blueSize != Settings.blueSize)
+                blueChange = true;
+            if (blueChange)
+                GUILayout.TextField($"{Settings.blueSize}", tfStyle);
+            else
+                try
+                {
+                    blueSize = Convert.ToSingle(GUILayout.TextField($"{Settings.blueSize}", tfStyle));
+                    if (!(blueSize > 2 || blueSize < 0))
+                        if (blueSize != Settings.blueSize)
+                            blueChange = true;
+                }
+                catch (Exception)
+                {
+                }
+            GUILayout.EndHorizontal();
+            if (redChange)
+            {
+                Settings.redSize = redSize;
+                scrController.instance.redPlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().transform.localScale = new Vector2(redSize, redSize);
+            }
+            if (blueChange)
+            {
+                Settings.blueSize = blueSize;
+                scrController.instance.bluePlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().transform.localScale = new Vector2(blueSize, blueSize);
+            }
         }
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
