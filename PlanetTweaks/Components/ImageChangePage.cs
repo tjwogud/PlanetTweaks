@@ -267,6 +267,8 @@ namespace PlayTweaks.Components
             }
         }
 
+        public static Color floorColor = new Color(0.78f, 0.78f, 0.886f);
+
         public void UpdateFloorIcons()
         {
             var images = GameObject.Find("PlanetTweaks_Images");
@@ -278,7 +280,7 @@ namespace PlayTweaks.Components
                 if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == i + page * 23)
                     obj.GetFloor().SetTileColor(Color.yellow);
                 else
-                    obj.GetFloor().SetTileColor(Color.white);
+                    obj.GetFloor().SetTileColor(floorColor);
             }
             for (int i = 0; i < images.transform.childCount - 1; i++)
             {
