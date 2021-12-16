@@ -329,13 +329,8 @@ namespace PlayTweaks.Components
                                     }
                                     floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
                                     var fr2 = floor.floorRenderer;
-<<<<<<< HEAD
-                                    fr2.color = new Color(fr2.color.r, fr2.color.b, fr2.color.g, 0);
-                                    fade = DOTween.ToAlpha(() => fr2.color, c => fr2.color = c, 1, 0.5f);
-=======
                                     fr2.color = fr2.color.WithAlpha(0);
                                     fade = DOTween.To(() => fr2.color, c => fr2.color = c, fr2.color.WithAlpha(1), 0.5f);
->>>>>>> dev
                                     floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(1, 0.5f);
                                     floor.GetIcon().material.DOFade(1, 0.5f);
                                 }
@@ -344,11 +339,7 @@ namespace PlayTweaks.Components
                     }
                     floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
                     var fr = floor.floorRenderer;
-<<<<<<< HEAD
-                    fade = DOTween.ToAlpha(() => fr.color, c => fr.color = c, 0, 0.5f);
-=======
                     fade = DOTween.To(() => fr.color, c => fr.color = c, fr.color.WithAlpha(0), 0.5f);
->>>>>>> dev
                     floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(0, 0.5f);
                     floor.GetIcon().material.DOFade(0, 0.5f);
                 }
