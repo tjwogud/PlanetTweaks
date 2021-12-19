@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using PlanetTweaks.Utils;
 using System.Linq;
 using UnityEngine;
 
@@ -16,9 +15,9 @@ namespace PlanetTweaks.Patch
             renderer.sortingLayerName = __instance.faceDetails.sortingLayerName;
             renderer.transform.parent = __instance.transform;
             if (__instance.isRed)
-                renderer.transform.localScale = new Vector2(Main.Settings.redSize, Main.Settings.redSize);
+                renderer.transform.localScale = new Vector3(Main.Settings.redSize, Main.Settings.redSize);
             else
-                renderer.transform.localScale = new Vector2(Main.Settings.blueSize, Main.Settings.blueSize);
+                renderer.transform.localScale = new Vector3(Main.Settings.blueSize, Main.Settings.blueSize);
         }
     }
 
