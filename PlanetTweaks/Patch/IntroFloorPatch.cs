@@ -34,7 +34,7 @@ namespace PlanetTweaks.Patch
                     var obj = new GameObject();
                     obj.transform.parent = images.transform;
 
-                    var floor = FloorUtils.AddFloor(-21.7f + j * 0.9f, -1.7f - i * 1.1f, obj.transform);
+                    var floor = FloorUtils.AddFloor(-21.7f + j * 0.9f, -1.9f - i * 1.1f, obj.transform);
                     floor.transform.ScaleXY(0.8f, 0.8f);
                     floor.dontChangeMySprite = true;
                     if (j == 5 && i == 3)
@@ -53,7 +53,10 @@ namespace PlanetTweaks.Patch
                     name.fontSize = 100;
                     if (j == 5 && i == 3)
                     {
-                        name.text = "불러오기";
+                        if (RDString.language == SystemLanguage.Korean)
+                            name.text = "불러오기";
+                        else
+                            name.text = "Import";
                         name.anchor = TextAnchor.MiddleCenter;
                         name.transform.position = new Vector3(floor.x, floor.y - 0.5f);
                         name.transform.ScaleXY(0.02f, 0.02f);
@@ -67,9 +70,12 @@ namespace PlanetTweaks.Patch
                     preview.gameObject.GetOrAddComponent<MeshRenderer>().sortingOrder = 3;
                     preview.SetLocalizedFont();
                     preview.fontSize = 100;
-                    preview.text = "미리보기중";
+                    if (RDString.language == SystemLanguage.Korean)
+                        preview.text = "미리보기중";
+                    else
+                        preview.text = "Preview";
                     preview.anchor = TextAnchor.MiddleRight;
-                    preview.transform.position = new Vector3(-21.7f + j * 0.9f + 0.46f, -1.7f - i * 1.1f - 0.36f);
+                    preview.transform.position = new Vector3(-21.7f + j * 0.9f + 0.46f, -1.9f - i * 1.1f - 0.36f);
                     preview.transform.ScaleXY(0.018f, 0.018f);
                     preview.gameObject.SetActive(false);
 

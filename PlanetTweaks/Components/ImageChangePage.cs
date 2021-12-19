@@ -61,7 +61,7 @@ namespace PlayTweaks.Components
                 }
             }
             // 왼쪽 페이지 버튼
-            events.Add(new Rect(18, 86, 43, 44), new ButtonEvent(
+            events.Add(new Rect(18, 129, 43, 44), new ButtonEvent(
             delegate
             {
                 if (instance.page == 0)
@@ -81,7 +81,7 @@ namespace PlayTweaks.Components
                 instance.ChangePage(instance.page - 1);
             }));
             // 오른쪽 페이지 버튼
-            events.Add(new Rect(1232, 86, 43, 44), new ButtonEvent(
+            events.Add(new Rect(1232, 129, 43, 44), new ButtonEvent(
             delegate
             {
                 instance.rightPageBtn.sprite = pageBtnEntered;
@@ -147,10 +147,19 @@ namespace PlayTweaks.Components
                     scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
                     scrController.instance.chosenplanet.transform.LocalMoveXY(-15, -3);
                     scrController.instance.chosenplanet.transform.position = new Vector3(-15, -3);
-                    if (scrController.instance.chosenplanet.isRed)
-                        instance.planetText.text = "<color=" + Persistence.GetPlayerColor(false).ToHex() + ">얼음 행성</color> 선택됨";
-                    else
-                        instance.planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
+                    if (RDString.language == SystemLanguage.Korean)
+                    {
+                        if (scrController.instance.chosenplanet.isRed)
+                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(false).ToHex() + ">얼음 행성</color> 선택됨";
+                        else
+                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
+                    } else
+                    {
+                        if (scrController.instance.chosenplanet.isRed)
+                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(false).ToHex() + ">Ice Planet</color> Selected";
+                        else
+                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">Fire Planet</color> Selected";
+                    }
                     instance.UpdateFloorIcons();
                     scrUIController.instance.WipeFromBlack();
                 });
@@ -163,7 +172,7 @@ namespace PlayTweaks.Components
                     int copyI = i;
                     int copyJ = j;
                     if (i == 5 && j == 3)
-                        events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 69 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
+                        events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 112 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
                         delegate
                         {
                             var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
@@ -191,7 +200,7 @@ namespace PlayTweaks.Components
                             }
                         }));
                     else
-                        events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 69 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
+                        events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 112 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
                         delegate
                         {
                             var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
@@ -291,7 +300,10 @@ namespace PlayTweaks.Components
                 obj.GetIcon().sprite = pair.Value;
                 obj.GetName().text = pair.Key;
             }
-            pageText.text = page + 1 + "페이지";
+            if (RDString.language == SystemLanguage.Korean)
+                pageText.text = page + 1 + "페이지";
+            else
+                pageText.text = "Page " + (page + 1);
             if (page == 0)
                 leftPageBtn.sprite = pageBtnDisabled;
             else if (new Rect(18, 86, 43, 44).Contains(Event.current.mousePosition))
@@ -345,6 +357,7 @@ namespace PlayTweaks.Components
                 }
         }
 
+        //private bool propertyPage = false;
         private bool changing = false;
 
         private int page = 0;
@@ -362,36 +375,53 @@ namespace PlayTweaks.Components
 
             planetText = new GameObject().AddComponent<TextMesh>();
             planetText.richText = true;
-            planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
+            if (RDString.language == SystemLanguage.Korean)
+                planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
+            else
+                planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">Fire Planet</color> Selected";
             planetText.SetLocalizedFont();
             planetText.fontSize = 100;
-            planetText.transform.position = new Vector3(-16.3f, -4.4f);
-            planetText.transform.ScaleXY(0.05f, 0.05f);
+            planetText.anchor = TextAnchor.UpperCenter;
+            planetText.transform.position = new Vector3(-15.05f, -4.25f);
+            planetText.transform.ScaleXY(0.045f, 0.045f);
 
             var exit = new GameObject().AddComponent<TextMesh>();
-            exit.text = "나가기";
+            if (RDString.language == SystemLanguage.Korean)
+                exit.text = "나가기";
+            else
+                exit.text = "Exit";
             exit.SetLocalizedFont();
             exit.fontSize = 100;
-            exit.transform.position = new Vector3(-15.2f, -5.29f);
-            exit.transform.ScaleXY(0.05f, 0.05f);
+            if (RDString.language == SystemLanguage.Korean)
+            {
+                exit.transform.position = new Vector3(-15.2f, -5.29f);
+                exit.transform.ScaleXY(0.05f, 0.05f);
+            } else
+            {
+                exit.transform.position = new Vector3(-15.15f, -5.23f);
+                exit.transform.ScaleXY(0.06f, 0.06f);
+            }
 
             pageText = new GameObject().AddComponent<TextMesh>();
-            pageText.text = "1페이지";
+            if (RDString.language == SystemLanguage.Korean)
+                pageText.text = "1페이지";
+            else
+                pageText.text = "Page 1";
             pageText.SetLocalizedFont();
             pageText.fontSize = 100;
-            pageText.transform.position = new Vector3(-22, -1.03f);
+            pageText.transform.position = new Vector3(-22, -1.23f);
             pageText.transform.ScaleXY(0.02f, 0.02f);
 
             leftPageBtn = new GameObject().AddComponent<SpriteRenderer>();
             leftPageBtn.sprite = pageBtnNormal;
             leftPageBtn.transform.Rotate(0, 0, -90);
-            leftPageBtn.transform.position = new Vector3(-22.26f, -1.5f);
+            leftPageBtn.transform.position = new Vector3(-22.26f, -1.7f);
             leftPageBtn.transform.ScaleXY(0.4f, 0.4f);
 
             rightPageBtn = new GameObject().AddComponent<SpriteRenderer>();
             rightPageBtn.sprite = pageBtnNormal;
             rightPageBtn.transform.Rotate(0, 0, 90);
-            rightPageBtn.transform.position = new Vector3(-16.64f, -1.5f);
+            rightPageBtn.transform.position = new Vector3(-16.64f, -1.7f);
             rightPageBtn.transform.ScaleXY(0.4f, 0.4f);
 
             instance.UpdateFloorIcons();
@@ -401,9 +431,8 @@ namespace PlayTweaks.Components
 
         public void OnGUI()
         {
-            if (scrController.instance.paused)
+            if (/*propertyPage || */scrController.instance.paused)
                 return;
-
             HandleButtonEvent();
         }
 
@@ -463,6 +492,22 @@ namespace PlayTweaks.Components
                 OnEntered = onEntered;
                 OnExited = onExited;
                 OnClicked = onClicked;
+            }
+        }
+
+        private class SliderField
+        {
+            public Func<float> Getter { get; }
+            public Action<float> Setter { get; }
+            public float Max { get; }
+            public float Min { get; }
+
+            public SliderField(Func<float> getter, Action<float> setter, float max, float min)
+            {
+                Getter = getter;
+                Setter = setter;
+                Max = max;
+                Min = min;
             }
         }
     }

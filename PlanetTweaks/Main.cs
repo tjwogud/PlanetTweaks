@@ -73,9 +73,9 @@ namespace PlanetTweaks
                 tfStyle = new GUIStyle(GUI.skin.textField);
                 tfStyle.fixedWidth = 75;
             }
-            GUILayout.Label("이미지 폴더 경로", labelStyle);
+            GUILayout.Label(RDString.language == SystemLanguage.Korean ? "이미지 폴더 경로" : "Image Directory Path", labelStyle);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("폴더 선택", btnStyle))
+            if (GUILayout.Button(RDString.language == SystemLanguage.Korean ? "폴더 변경" : "Change", btnStyle))
             {
                 string selected = Sprites.ShowOpenFileDialog();
                 if (selected != null)
@@ -87,7 +87,7 @@ namespace PlanetTweaks
             GUILayout.Label(Settings.spriteDirectory);
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
-            GUILayout.Label("불 행성 이미지 크기", labelStyle);
+            GUILayout.Label(RDString.language == SystemLanguage.Korean ? "불 행성 이미지 크기" : "Fire Planet Image Size", labelStyle);
             GUILayout.BeginHorizontal();
             bool redChange = false;
             float redSize = GUILayout.HorizontalSlider(Settings.redSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
@@ -106,7 +106,7 @@ namespace PlanetTweaks
                 }
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
-            GUILayout.Label("얼음 행성 이미지 크기", labelStyle);
+            GUILayout.Label(RDString.language == SystemLanguage.Korean ? "얼음 행성 이미지 크기" : "Ice Planet Image Size", labelStyle);
             GUILayout.BeginHorizontal();
             bool blueChange = false;
             float blueSize = GUILayout.HorizontalSlider(Settings.blueSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
