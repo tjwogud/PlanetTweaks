@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using PlanetTweaks.Utils;
 using PlayTweaks.Components;
 using System;
 using System.Linq;
@@ -89,10 +90,8 @@ namespace PlanetTweaks
             GUILayout.Space(10);
             GUILayout.Label(RDString.language == SystemLanguage.Korean ? "불 행성 이미지 크기" : "Fire Planet Image Size", labelStyle);
             GUILayout.BeginHorizontal();
-            bool redChange = false;
             float redSize = GUILayout.HorizontalSlider(Settings.redSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
-            if (redSize != Settings.redSize)
-                redChange = true;
+            bool redChange = redSize != Settings.redSize;
             if (redChange)
                 GUILayout.TextField($"{Settings.redSize}", tfStyle);
             else
@@ -102,16 +101,16 @@ namespace PlanetTweaks
                     if (!(redSize > 2 || redSize < 0))
                         if (redSize != Settings.redSize)
                             redChange = true;
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                 }
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
             GUILayout.Label(RDString.language == SystemLanguage.Korean ? "얼음 행성 이미지 크기" : "Ice Planet Image Size", labelStyle);
             GUILayout.BeginHorizontal();
-            bool blueChange = false;
             float blueSize = GUILayout.HorizontalSlider(Settings.blueSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
-            if (blueSize != Settings.blueSize)
-                blueChange = true;
+            bool blueChange = blueSize != Settings.blueSize;
             if (blueChange)
                 GUILayout.TextField($"{Settings.blueSize}", tfStyle);
             else
@@ -126,6 +125,16 @@ namespace PlanetTweaks
                 {
                 }
             GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+            bool redColor = GUILayout.Toggle(Settings.redColor,
+                (RDString.language == SystemLanguage.Korean ? "불 행성 이미지 색 적용" : "Apply Fire Planet Image Color") + $"  <color=grey>{(Settings.redColor ? "O" : "Ⅹ")}</color>",
+                labelStyle);
+            bool redColorChange = Settings.redColor != redColor;
+            GUILayout.Space(5);
+            bool blueColor = GUILayout.Toggle(Settings.blueColor,
+                (RDString.language == SystemLanguage.Korean ? "얼음 행성 이미지 색 적용" : "Apply Ice Planet Image Color") + $"  <color=grey>{(Settings.blueColor ? "O" : "Ⅹ")}</color>",
+                labelStyle);
+            bool blueColorChange = Settings.blueColor != blueColor;
             if (redChange)
             {
                 Settings.redSize = redSize;
@@ -135,6 +144,22 @@ namespace PlanetTweaks
             {
                 Settings.blueSize = blueSize;
                 scrController.instance.bluePlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().transform.localScale = new Vector2(blueSize, blueSize);
+            }
+            if (redColorChange)
+            {
+                Settings.redColor = redColor;
+                if (redColor)
+                    scrController.instance.redPlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = ColorUtils.GetColor(true);
+                else
+                    scrController.instance.redPlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = Color.white;
+            }
+            if (blueColorChange)
+            {
+                Settings.blueColor = blueColor;
+                if (blueColor)
+                    scrController.instance.bluePlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = ColorUtils.GetColor(false);
+                else
+                    scrController.instance.bluePlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = Color.white;
             }
         }
 
