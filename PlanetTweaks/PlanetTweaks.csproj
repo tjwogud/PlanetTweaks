@@ -93,8 +93,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Patch\PlanetImagePatch.cs" />
+    <Compile Include="Patch\PlayerColorPatch.cs" />
     <Compile Include="Patch\UpdateButtonsContainerPatch.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Utils\ColorUtils.cs" />
     <Compile Include="Utils\ComponentUtils.cs" />
     <Compile Include="Utils\FloorUtils.cs" />
     <Compile Include="Components\ImageChangePage.cs" />
