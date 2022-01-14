@@ -24,10 +24,8 @@ namespace PlanetTweaks.Utils
 
         public static scrFloor AddEventFloor(float x, float y, QuickAction action, Transform parent = null)
         {
-            var obj = Object.Instantiate(GetGameObjectAt(0, -3).GetComponent<scrFloor>(), parent);
+            var obj = AddFloorAt(0, -3, x, y, parent) ?? AddFloorAt(-3, -2, x, y, parent);
             Object.Destroy(obj.GetComponent<ffxCallFunction>());
-            obj.transform.position = new Vector3(x, y);
-            obj.transform.Find("SpecIcon").gameObject.SetActive(false);
             var func = obj.gameObject.AddComponent<ffxCallFunction>();
             func.ue = new QuickEvent();
             func.ue.persistentCalls = new QuickPersistentCallGroup();
