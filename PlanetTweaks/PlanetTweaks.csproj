@@ -92,8 +92,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Patch\ControllerUpdatePatch.cs" />
+    <Compile Include="Patch\NoStopPatch.cs" />
     <Compile Include="Patch\PlanetImagePatch.cs" />
     <Compile Include="Patch\PlayerColorPatch.cs" />
+    <Compile Include="Patch\SwitchChosenPatch.cs" />
     <Compile Include="Patch\UpdateButtonsContainerPatch.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utils\ColorUtils.cs" />
