@@ -1,7 +1,9 @@
 ﻿using HarmonyLib;
+using PlanetTweaks.Patch;
 using PlanetTweaks.Utils;
 using PlayTweaks.Components;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -15,6 +17,22 @@ namespace PlanetTweaks
         public static Harmony harmony;
         public static bool IsEnabled = false;
         public static Settings Settings;
+
+        public static void Load(UnityModManager.ModEntry modEntry)
+        {
+            LoadAssembly("Mods/PlanetTweaks/Ookii.Dialogs.dll");
+            Setup(modEntry);
+        }
+
+        private static void LoadAssembly(string path)
+        {
+            using (FileStream stream = new FileStream(path, FileMode.Open))
+            {
+                byte[] data = new byte[stream.Length];
+                stream.Read(data, 0, data.Length);
+                AppDomain.CurrentDomain.Load(data);
+            }
+        }
 
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
@@ -39,6 +57,15 @@ namespace PlanetTweaks
             {
                 harmony = new Harmony(modEntry.Info.Id);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
+                if (UnityModManager.FindMod("NoStopMod") != null)
+                {
+                    Type keyLimiterManager = AppDomain.CurrentDomain.GetAssemblies().Reverse().Select(assembly => assembly?.GetType("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager")).FirstOrDefault(t => t != null);
+                    if (keyLimiterManager != null)
+                    {
+                        MethodBase method = keyLimiterManager.GetMethod("ShouldBeIgnored");
+                        harmony.Patch(method, postfix: new HarmonyMethod(typeof(NoStopPatch), "Postfix"));
+                    }
+                }
             }
             else
             {
