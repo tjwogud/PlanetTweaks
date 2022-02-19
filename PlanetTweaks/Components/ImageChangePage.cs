@@ -150,15 +150,15 @@ namespace PlayTweaks.Components
                     if (RDString.language == SystemLanguage.Korean)
                     {
                         if (scrController.instance.chosenplanet.isRed)
-                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(false).ToHex() + ">얼음 행성</color> 선택됨";
+                            instance.planetText.text = "<color=" + ColorUtils.GetColor(false).ToHex() + ">얼음 행성</color> 선택됨";
                         else
-                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
+                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">불 행성</color> 선택됨";
                     } else
                     {
                         if (scrController.instance.chosenplanet.isRed)
-                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(false).ToHex() + ">Ice Planet</color> Selected";
+                            instance.planetText.text = "<color=" + ColorUtils.GetColor(false).ToHex() + ">Ice Planet</color> Selected";
                         else
-                            instance.planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">Fire Planet</color> Selected";
+                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">Fire Planet</color> Selected";
                     }
                     instance.UpdateFloorIcons();
                     scrUIController.instance.WipeFromBlack();
