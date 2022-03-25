@@ -11,7 +11,7 @@ namespace PlanetTweaks.Patch
         public static void Postfix(scrPlanet __instance)
         {
             var renderer = new GameObject().AddComponent<SpriteRenderer>();
-            renderer.sortingOrder = 999;
+            renderer.sortingOrder = __instance.sprite.sortingOrder + 1;
             renderer.sortingLayerID = __instance.faceDetails.sortingLayerID;
             renderer.sortingLayerName = __instance.faceDetails.sortingLayerName;
             renderer.transform.parent = __instance.transform;
@@ -35,10 +35,11 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix(scrPlanet __instance)
         {
-            if (__instance.isRed)
-                Sprites.RedSelected = Sprites.RedSelected;
-            else
-                Sprites.BlueSelected = Sprites.BlueSelected;
+            if (__instance.sprite.enabled)
+                if (__instance.isRed)
+                    Sprites.RedSelected = Sprites.RedSelected;
+                else
+                    Sprites.BlueSelected = Sprites.BlueSelected;
         }
     }
 
