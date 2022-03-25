@@ -98,13 +98,13 @@ namespace PlayTweaks.Components
             events.Add(new Rect(1920 - 400, 1080 - 150, 400, 150), new ButtonEvent(
             delegate
             {
-                var floor = FloorUtils.GetGameObjectAt(-13.9f, -5.65f).GetComponent<scrFloor>();
+                var floor = FloorUtils.GetFloorGameObjectAt(-13.9f, -5.65f).GetComponent<scrFloor>();
                 floor.transform.DOKill(false);
                 floor.transform.DOScale(new Vector3(0.55f, 0.55f), 0.5f);
             },
             delegate
             {
-                var floor = FloorUtils.GetGameObjectAt(-13.9f, -5.65f).GetComponent<scrFloor>();
+                var floor = FloorUtils.GetFloorGameObjectAt(-13.9f, -5.65f).GetComponent<scrFloor>();
                 floor.transform.DOKill(false);
                 floor.transform.DOScale(new Vector3(0.5f, 0.5f), 0.5f);
             },
@@ -128,13 +128,13 @@ namespace PlayTweaks.Components
             events.Add(new Rect(1920 - 615, 1080 - 950, 600, 600), new ButtonEvent(
             delegate
             {
-                var floor = FloorUtils.GetGameObjectAt(-15, -3).GetComponent<scrFloor>();
+                var floor = FloorUtils.GetFloorGameObjectAt(-15, -3).GetComponent<scrFloor>();
                 floor.transform.DOKill(false);
                 floor.transform.DOScale(new Vector3(1, 1), 0.5f);
             },
             delegate
             {
-                var floor = FloorUtils.GetGameObjectAt(-15, -3).GetComponent<scrFloor>();
+                var floor = FloorUtils.GetFloorGameObjectAt(-15, -3).GetComponent<scrFloor>();
                 floor.transform.DOKill(false);
                 floor.transform.DOScale(new Vector3(0.8f, 0.8f), 0.5f);
             },
@@ -175,13 +175,13 @@ namespace PlayTweaks.Components
                         events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 112 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
                         delegate
                         {
-                            var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(0.9f, 0.9f), 0.5f);
                         },
                         delegate
                         {
-                            var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(0.8f, 0.8f), 0.5f);
                         },
@@ -203,7 +203,7 @@ namespace PlayTweaks.Components
                         events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 112 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
                         delegate
                         {
-                            var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
                             if (floor.GetIcon().sprite == null)
                                 return;
                             floor.transform.DOKill(false);
@@ -223,7 +223,7 @@ namespace PlayTweaks.Components
                         },
                         delegate
                         {
-                            var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(0.8f, 0.8f), 0.5f);
                             floor.GetPreview().gameObject.SetActive(false);
@@ -237,7 +237,7 @@ namespace PlayTweaks.Components
                         },
                         delegate
                         {
-                            var floor = FloorUtils.GetGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
                             if (floor.GetIcon().sprite == null)
                                 return;
                             floor.transform.DOComplete(false);
@@ -339,7 +339,7 @@ namespace PlayTweaks.Components
                                         });
                                         break;
                                     }
-                                    floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+                                    floor = FloorUtils.GetFloorGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
                                     var fr2 = floor.floorRenderer;
                                     fr2.color = fr2.color.WithAlpha(0);
                                     fade = DOTween.To(() => fr2.color, c => fr2.color = c, fr2.color.WithAlpha(1), 0.5f);
@@ -349,7 +349,7 @@ namespace PlayTweaks.Components
                         });
                         break;
                     }
-                    floor = FloorUtils.GetGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+                    floor = FloorUtils.GetFloorGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
                     var fr = floor.floorRenderer;
                     fade = DOTween.To(() => fr.color, c => fr.color = c, fr.color.WithAlpha(0), 0.5f);
                     floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(0, 0.5f);

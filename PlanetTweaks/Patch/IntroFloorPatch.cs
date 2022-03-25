@@ -15,16 +15,18 @@ namespace PlanetTweaks.Patch
         {
             public static void Postfix()
             {
-                FloorUtils.AddTeleportFloor(-2, -3, -15, -3, -18, -3.5f, false, action2: delegate
+                if (!FloorUtils.AddTeleportFloor(-2, -3, -15, -3, -18, -3.5f, false, action2: delegate
                 {
                     if (scrController.instance.redPlanet.isChosen)
                         scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
                     scrController.instance.camy.zoomSize = 0.5f;
                     scrController.instance.camy.isPulsingOnHit = false;
                     new GameObject().AddComponent<ImageChangePage>();
-                }, parent: GameObject.Find("outer ring").transform);
+                }, parent: GameObject.Find("outer ring").transform))
+                    return;
 
-                FloorUtils.AddEventFloor(-15, -3, null);
+                if (!FloorUtils.AddEventFloor(-15, -3, null))
+                    FloorUtils.AddFloor(-15, -3);
 
                 var exitFloor = FloorUtils.AddFloor(-13.9f, -5.65f);
                 exitFloor.transform.ScaleXY(0.5f, 0.5f);
@@ -90,15 +92,18 @@ namespace PlanetTweaks.Patch
                         icon.transform.position = floor.transform.position;
                         icon.transform.ScaleXY(0.7f, 0.7f);
                     }
-                for (int i = -18; i < -6; i++)
-                    for (int j = -3; j < 4; j += 6)
-                    {
-                        GameObject obj = FloorUtils.GetGameObjectAt(j, i);
-                        obj.GetComponent<scrFloor>().isLandable = false;
-                        obj.SetActive(false);
-                    }
-                leftMovingFloor = FloorUtils.AddEventFloor(-3, -7, null);
-                rightMovingFloor= FloorUtils.AddEventFloor(3, -7, null);
+                if (FloorUtils.GetFloorGameObjectAt(0, -3))
+                {
+                    for (int i = -18; i < -6; i++)
+                        for (int j = -3; j < 4; j += 6)
+                        {
+                            GameObject obj = FloorUtils.GetFloorGameObjectAt(j, i);
+                            obj.GetComponent<scrFloor>().isLandable = false;
+                            obj.SetActive(false);
+                        }
+                    leftMovingFloor = FloorUtils.AddEventFloor(-3, -7, null);
+                    rightMovingFloor = FloorUtils.AddEventFloor(3, -7, null);
+                }
             }
         }
     }
