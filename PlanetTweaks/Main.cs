@@ -57,14 +57,12 @@ namespace PlanetTweaks
             {
                 harmony = new Harmony(modEntry.Info.Id);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
-                if (UnityModManager.FindMod("NoStopMod") != null)
+                UnityModManager.ModEntry noStopMod = UnityModManager.FindMod("NoStopMod");
+                if (noStopMod != null)
                 {
-                    Type keyLimiterManager = AppDomain.CurrentDomain.GetAssemblies().Reverse().Select(assembly => assembly?.GetType("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager")).FirstOrDefault(t => t != null);
+                    Type keyLimiterManager = noStopMod.Assembly.GetType("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager");
                     if (keyLimiterManager != null)
-                    {
-                        MethodBase method = keyLimiterManager.GetMethod("ShouldBeIgnored");
-                        harmony.Patch(method, postfix: new HarmonyMethod(typeof(NoStopPatch), "Postfix"));
-                    }
+                        harmony.Patch(keyLimiterManager.GetMethod("ShouldBeIgnored"), postfix: new HarmonyMethod(typeof(NoStopPatch), "Postfix"));
                 }
             }
             else
