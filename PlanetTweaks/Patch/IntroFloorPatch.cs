@@ -21,7 +21,7 @@ namespace PlanetTweaks.Patch
                         scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
                     scrController.instance.camy.zoomSize = 0.5f;
                     scrController.instance.camy.isPulsingOnHit = false;
-                    new GameObject().AddComponent<ImageChangePage>();
+                    new GameObject("PlanetTweaks").AddComponent<ImageChangePage>();
                 }, parent: GameObject.Find("outer ring").transform))
                     return;
 
@@ -38,7 +38,7 @@ namespace PlanetTweaks.Patch
                 for (int i = 0; i < 4; i++)
                     for (int j = 0; j < 6; j++)
                     {
-                        var obj = new GameObject();
+                        var obj = new GameObject("Floor");
                         obj.transform.parent = images.transform;
 
                         var floor = FloorUtils.AddFloor(-21.7f + j * 0.9f, -1.9f - i * 1.1f, obj.transform);
@@ -53,7 +53,7 @@ namespace PlanetTweaks.Patch
                             floor.floorRenderer.renderer.sortingLayerName = "Default";
                         }
 
-                        var name = new GameObject().AddComponent<TextMesh>();
+                        var name = new GameObject("Name").AddComponent<TextMesh>();
                         name.transform.parent = obj.transform;
                         name.gameObject.GetOrAddComponent<MeshRenderer>().sortingOrder = 0;
                         name.SetLocalizedFont();
@@ -72,7 +72,7 @@ namespace PlanetTweaks.Patch
                         name.transform.position = new Vector3(floor.x - 0.35f, floor.y - 0.38f);
                         name.transform.ScaleXY(0.015f, 0.015f);
 
-                        var preview = new GameObject().AddComponent<TextMesh>();
+                        var preview = new GameObject("Preview").AddComponent<TextMesh>();
                         preview.transform.parent = obj.transform;
                         preview.gameObject.GetOrAddComponent<MeshRenderer>().sortingOrder = 3;
                         preview.SetLocalizedFont();
@@ -86,11 +86,12 @@ namespace PlanetTweaks.Patch
                         preview.transform.ScaleXY(0.018f, 0.018f);
                         preview.gameObject.SetActive(false);
 
-                        var icon = new GameObject().AddComponent<SpriteRenderer>();
+                        var icon = new GameObject("Icon").AddComponent<SpriteRenderer>();
                         icon.transform.parent = obj.transform;
                         icon.sortingOrder = 2;
                         icon.transform.position = floor.transform.position;
                         icon.transform.ScaleXY(0.7f, 0.7f);
+                        icon.transform.localScale *= 100f / SpriteUtils.Size;
                     }
                 if (FloorUtils.GetFloorGameObjectAt(0, -3))
                 {

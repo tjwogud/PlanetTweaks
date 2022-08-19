@@ -150,15 +150,15 @@ namespace PlayTweaks.Components
                     if (RDString.language == SystemLanguage.Korean)
                     {
                         if (scrController.instance.chosenplanet.isRed)
-                            instance.planetText.text = "<color=" + ColorUtils.GetColor(false).ToHex() + ">얼음 행성</color> 선택됨";
+                            instance.planetText.text = "<color=" + PlanetUtils.GetColor(false).ToHex() + ">얼음 행성</color> 선택됨";
                         else
-                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">불 행성</color> 선택됨";
+                            instance.planetText.text = "<color=" + PlanetUtils.GetColor(true).ToHex() + ">불 행성</color> 선택됨";
                     } else
                     {
                         if (scrController.instance.chosenplanet.isRed)
-                            instance.planetText.text = "<color=" + ColorUtils.GetColor(false).ToHex() + ">Ice Planet</color> Selected";
+                            instance.planetText.text = "<color=" + PlanetUtils.GetColor(false).ToHex() + ">Ice Planet</color> Selected";
                         else
-                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">Fire Planet</color> Selected";
+                            instance.planetText.text = "<color=" + PlanetUtils.GetColor(true).ToHex() + ">Fire Planet</color> Selected";
                     }
                     instance.UpdateFloorIcons();
                     scrUIController.instance.WipeFromBlack();
@@ -209,17 +209,17 @@ namespace PlayTweaks.Components
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(1, 1), 0.5f).OnComplete(delegate
                             {
-                                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == instance.page * 23 + copyJ * 6 + copyI)
+                                if (Sprites.sprites.Keys.ToList().IndexOf(scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == instance.page * 23 + copyJ * 6 + copyI)
                                     return;
                                 floor.GetPreview().gameObject.SetActive(true);
                                 if (scrController.instance.redPlanet.isChosen)
-                                    Sprites.BluePreview = floor.GetIcon().sprite;
+                                    Sprites.BluePreview = Sprites.sprites[floor.GetIcon().sprite.name];
                                 else
-                                    Sprites.RedPreview = floor.GetIcon().sprite;
+                                    Sprites.RedPreview = Sprites.sprites[floor.GetIcon().sprite.name];
                             }).SetAutoKill(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOKill(false);
-                            sprite.transform.DOScale(new Vector3(0.875f, 0.875f), 0.5f);
+                            sprite.transform.DOScale(new Vector3(0.875f, 0.875f) * (100f / SpriteUtils.Size), 0.5f);
                         },
                         delegate
                         {
@@ -229,7 +229,7 @@ namespace PlayTweaks.Components
                             floor.GetPreview().gameObject.SetActive(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOKill(false);
-                            sprite.transform.DOScale(new Vector3(0.7f, 0.7f), 0.5f);
+                            sprite.transform.DOScale(new Vector3(0.7f, 0.7f) * (100f / SpriteUtils.Size), 0.5f);
                             if (scrController.instance.redPlanet.isChosen)
                                 Sprites.BluePreview = null;
                             else
@@ -246,19 +246,19 @@ namespace PlayTweaks.Components
                             sprite.transform.DOComplete(false);
                             int index = instance.page * 23 + copyJ * 6 + copyI;
                             if (Input.GetMouseButtonUp(0))
-                                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == index)
+                                if (Sprites.sprites.Keys.ToList().IndexOf(scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == index)
                                 {
                                     if (scrController.instance.redPlanet.isChosen)
-                                        Sprites.BlueSelected = -1;
+                                        Sprites.BlueSelected = null;
                                     else
-                                        Sprites.RedSelected = -1;
+                                        Sprites.RedSelected = null;
                                 }
                                 else
                                 {
                                     if (scrController.instance.redPlanet.isChosen)
-                                        Sprites.BlueSelected = index;
+                                        Sprites.BlueSelected = Sprites.sprites.ElementAt(index).Key;
                                     else
-                                        Sprites.RedSelected = index;
+                                        Sprites.RedSelected = Sprites.sprites.ElementAt(index).Key;
                                 }
                             else if (Input.GetMouseButtonUp(1))
                             {
@@ -286,7 +286,7 @@ namespace PlayTweaks.Components
                 var obj = images.transform.GetChild(i);
                 obj.GetIcon().sprite = null;
                 obj.GetName().text = null;
-                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == i + page * 23)
+                if (Sprites.sprites.Keys.ToList().IndexOf(scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == i + page * 23)
                     obj.GetFloor().SetTileColor(Color.yellow);
                 else
                     obj.GetFloor().SetTileColor(floorColor);
@@ -297,7 +297,7 @@ namespace PlayTweaks.Components
                     break;
                 var pair = Sprites.sprites.ElementAt(i + page * 23);
                 var obj = images.transform.GetChild(i);
-                obj.GetIcon().sprite = pair.Value;
+                obj.GetIcon().sprite = pair.Value.GetThumbnail();
                 obj.GetName().text = pair.Key;
             }
             if (RDString.language == SystemLanguage.Korean)
