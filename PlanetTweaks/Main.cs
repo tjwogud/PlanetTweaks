@@ -57,9 +57,6 @@ namespace PlanetTweaks
         }
 
         private static GUIStyle labelStyle;
-        private static GUIStyle btnStyle;
-        private static GUIStyle sliderStyle;
-        private static GUIStyle tfStyle;
 
         private static void OnGUI(UnityModManager.ModEntry modEntry)
         {
@@ -68,24 +65,9 @@ namespace PlanetTweaks
                 labelStyle = new GUIStyle(GUI.skin.label);
                 labelStyle.fontStyle = FontStyle.Bold;
             }
-            if (btnStyle == null)
-            {
-                btnStyle = new GUIStyle(GUI.skin.button);
-                btnStyle.fixedWidth = 70;
-            }
-            if (sliderStyle == null)
-            {
-                sliderStyle = new GUIStyle(GUI.skin.horizontalSlider);
-                sliderStyle.fixedWidth = 600;
-            }
-            if (tfStyle == null)
-            {
-                tfStyle = new GUIStyle(GUI.skin.textField);
-                tfStyle.fixedWidth = 75;
-            }
             GUILayout.Label(RDString.language == SystemLanguage.Korean ? "이미지 폴더 경로" : "Image Directory Path", labelStyle);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button(RDString.language == SystemLanguage.Korean ? "폴더 변경" : "Change Directory", btnStyle))
+            if (GUILayout.Button(RDString.language == SystemLanguage.Korean ? "폴더 변경" : "Change"))
             {
                 string selected = Sprites.ShowFolderBrowserDialog();
                 if (selected != null && Directory.Exists(selected))
@@ -95,18 +77,19 @@ namespace PlanetTweaks
                 }
             }
             GUILayout.Label(Settings.spriteDirectory);
+            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
             GUILayout.Label(RDString.language == SystemLanguage.Korean ? "불 행성 이미지 크기" : "Fire Planet Image Size", labelStyle);
             GUILayout.BeginHorizontal();
-            float redSize = GUILayout.HorizontalSlider(Settings.redSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
+            float redSize = GUILayout.HorizontalSlider(Settings.redSize, 0, 2, GUI.skin.horizontalSlider, GUI.skin.horizontalSliderThumb, GUILayout.Width(600));
             bool redChange = redSize != Settings.redSize;
             if (redChange)
-                GUILayout.TextField($"{Settings.redSize}", tfStyle);
+                GUILayout.TextField($"{Settings.redSize}", GUILayout.Width(75));
             else
                 try
                 {
-                    redSize = Convert.ToSingle(GUILayout.TextField($"{Settings.redSize}", tfStyle));
+                    redSize = Convert.ToSingle(GUILayout.TextField($"{Settings.redSize}", GUILayout.Width(75)));
                     if (!(redSize > 2 || redSize < 0))
                         if (redSize != Settings.redSize)
                             redChange = true;
@@ -118,14 +101,14 @@ namespace PlanetTweaks
             GUILayout.Space(10);
             GUILayout.Label(RDString.language == SystemLanguage.Korean ? "얼음 행성 이미지 크기" : "Ice Planet Image Size", labelStyle);
             GUILayout.BeginHorizontal();
-            float blueSize = GUILayout.HorizontalSlider(Settings.blueSize, 0, 2, sliderStyle, GUI.skin.horizontalSliderThumb);
+            float blueSize = GUILayout.HorizontalSlider(Settings.blueSize, 0, 2, GUI.skin.horizontalSlider, GUI.skin.horizontalSliderThumb, GUILayout.Width(600));
             bool blueChange = blueSize != Settings.blueSize;
             if (blueChange)
-                GUILayout.TextField($"{Settings.blueSize}", tfStyle);
+                GUILayout.TextField($"{Settings.blueSize}", GUILayout.Width(75));
             else
                 try
                 {
-                    blueSize = Convert.ToSingle(GUILayout.TextField($"{Settings.blueSize}", tfStyle));
+                    blueSize = Convert.ToSingle(GUILayout.TextField($"{Settings.blueSize}", GUILayout.Width(75)));
                     if (!(blueSize > 2 || blueSize < 0))
                         if (blueSize != Settings.blueSize)
                             blueChange = true;
