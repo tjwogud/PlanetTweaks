@@ -18,22 +18,6 @@ namespace PlanetTweaks
         public static bool IsEnabled = false;
         public static Settings Settings;
 
-        public static void Load(UnityModManager.ModEntry modEntry)
-        {
-            LoadAssembly("Mods/PlanetTweaks/Ookii.Dialogs.dll");
-            Setup(modEntry);
-        }
-
-        private static void LoadAssembly(string path)
-        {
-            using (FileStream stream = new FileStream(path, FileMode.Open))
-            {
-                byte[] data = new byte[stream.Length];
-                stream.Read(data, 0, data.Length);
-                AppDomain.CurrentDomain.Load(data);
-            }
-        }
-
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
             Logger = modEntry.Logger;
@@ -101,10 +85,10 @@ namespace PlanetTweaks
             }
             GUILayout.Label(RDString.language == SystemLanguage.Korean ? "이미지 폴더 경로" : "Image Directory Path", labelStyle);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button(RDString.language == SystemLanguage.Korean ? "폴더 변경" : "Change", btnStyle))
+            if (GUILayout.Button(RDString.language == SystemLanguage.Korean ? "폴더 변경" : "Change Directory", btnStyle))
             {
-                string selected = Sprites.ShowOpenFileDialog();
-                if (selected != null)
+                string selected = Sprites.ShowFolderBrowserDialog();
+                if (selected != null && Directory.Exists(selected))
                 {
                     Settings.spriteDirectory = selected;
                     Sprites.Load();
