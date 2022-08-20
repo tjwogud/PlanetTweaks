@@ -376,9 +376,9 @@ namespace PlayTweaks.Components
             planetText = new GameObject().AddComponent<TextMesh>();
             planetText.richText = true;
             if (RDString.language == SystemLanguage.Korean)
-                planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">불 행성</color> 선택됨";
+                planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">불 행성</color> 선택됨";
             else
-                planetText.text = "<color=" + Persistence.GetPlayerColor(true).ToHex() + ">Fire Planet</color> Selected";
+                planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">Fire Planet</color> Selected";
             planetText.SetLocalizedFont();
             planetText.fontSize = 100;
             planetText.anchor = TextAnchor.UpperCenter;

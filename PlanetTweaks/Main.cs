@@ -115,12 +115,18 @@ namespace PlanetTweaks
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
             bool redColor = GUILayout.Toggle(Settings.redColor,
-                (RDString.language == SystemLanguage.Korean ? "불 행성 이미지 색 적용" : "Apply Fire Planet Image Color") + $"  <color=grey>{(Settings.redColor ? "O" : "Ⅹ")}</color>",
+                (RDString.language == SystemLanguage.Korean
+                ? $"<color={ColorUtils.GetColor(true).ToHex()}>불 행성</color> 색을 이미지에 적용"
+                : $"Apply <color={ColorUtils.GetColor(true).ToHex()}>Fire Planet</color> Color To Image"
+                ) + $"  <color=grey>{(Settings.redColor ? "O" : "Ⅹ")}</color>",
                 labelStyle);
             bool redColorChange = Settings.redColor != redColor;
             GUILayout.Space(5);
             bool blueColor = GUILayout.Toggle(Settings.blueColor,
-                (RDString.language == SystemLanguage.Korean ? "얼음 행성 이미지 색 적용" : "Apply Ice Planet Image Color") + $"  <color=grey>{(Settings.blueColor ? "O" : "Ⅹ")}</color>",
+                (RDString.language == SystemLanguage.Korean
+                ? $"<color={ColorUtils.GetColor(false).ToHex()}>얼음 행성</color> 색을 이미지에 적용"
+                : $"Apply <color={ColorUtils.GetColor(false).ToHex()}>Ice Planet</color> Color To Image"
+                ) + $"  <color=grey>{(Settings.blueColor ? "O" : "Ⅹ")}</color>",
                 labelStyle);
             bool blueColorChange = Settings.blueColor != blueColor;
             if (redChange)

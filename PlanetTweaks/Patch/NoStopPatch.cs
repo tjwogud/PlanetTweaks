@@ -13,9 +13,13 @@ namespace PlanetTweaks.Patch
         {
             if (original != null)
                 Main.Harmony.Unpatch(original, HarmonyPatchType.Postfix, Main.ModEntry.Info.Id);
-            original = AccessTools.Method("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager:ShouldBeIgnored");
-            if (original != null)
-                Main.Harmony.Patch(original, postfix: new HarmonyMethod(typeof(NoStopPatch), "ShouldBeIgnoredPostfix"));
+            try
+            {
+                Main.Harmony.Patch(original = AccessTools.Method("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager:ShouldBeIgnored"), postfix: new HarmonyMethod(typeof(NoStopPatch), "ShouldBeIgnoredPostfix"));
+            } catch (Exception)
+            {
+                original = null;
+            }
         }
 
         public static void ShouldBeIgnoredPostfix(int keyCode, ref bool __result)
