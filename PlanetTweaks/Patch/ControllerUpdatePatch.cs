@@ -25,7 +25,9 @@ namespace PlanetTweaks.Patch
                     scrController.instance.chosenplanet.transform.DOMoveY(y + 1, 0.2f);
                     IntroFloorPatch.leftMovingFloor.transform.DOMoveY(y + 1, 0.2f);
                     IntroFloorPatch.rightMovingFloor.transform.DOMoveY(y + 1, 0.2f);
-                    scrCamera.instance.Refocus(scrController.instance.chosenplanet.transform);
+                    scrCamera.instance.frompos = scrCamera.instance.pos;
+                    scrCamera.instance.topos = new Vector3(x, y + 1, -10);
+                    scrCamera.instance.timer = 0;
                 }
                 else if (y >= -17 && (Input.GetKeyDown(KeyCode.DownArrow) || Input.mouseScrollDelta.y < -0.4f))
                 {
@@ -35,7 +37,9 @@ namespace PlanetTweaks.Patch
                     scrController.instance.chosenplanet.transform.DOMoveY(y - 1f, 0.2f);
                     IntroFloorPatch.leftMovingFloor.transform.DOMoveY(y - 1, 0.2f);
                     IntroFloorPatch.rightMovingFloor.transform.DOMoveY(y - 1, 0.2f);
-                    scrCamera.instance.Refocus(scrController.instance.chosenplanet.transform);
+                    scrCamera.instance.frompos = scrCamera.instance.pos;
+                    scrCamera.instance.topos = new Vector3(x, y - 1, -10);
+                    scrCamera.instance.timer = 0;
                 }
             }
         }

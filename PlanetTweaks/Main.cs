@@ -13,13 +13,15 @@ namespace PlanetTweaks
 {
     public static class Main
     {
+        public static UnityModManager.ModEntry ModEntry;
         public static UnityModManager.ModEntry.ModLogger Logger;
-        public static Harmony harmony;
+        public static Harmony Harmony;
         public static bool IsEnabled = false;
         public static Settings Settings;
 
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
+            ModEntry = modEntry;
             Logger = modEntry.Logger;
             modEntry.OnToggle = OnToggle;
             modEntry.OnGUI = OnGUI;
@@ -39,19 +41,13 @@ namespace PlanetTweaks
             IsEnabled = value;
             if (value)
             {
-                harmony = new Harmony(modEntry.Info.Id);
-                harmony.PatchAll(Assembly.GetExecutingAssembly());
-                UnityModManager.ModEntry noStopMod = UnityModManager.FindMod("NoStopMod");
-                if (noStopMod != null)
-                {
-                    Type keyLimiterManager = noStopMod.Assembly.GetType("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager");
-                    if (keyLimiterManager != null)
-                        harmony.Patch(keyLimiterManager.GetMethod("ShouldBeIgnored"), postfix: new HarmonyMethod(typeof(NoStopPatch), "Postfix"));
-                }
+                Harmony = new Harmony(modEntry.Info.Id);
+                Harmony.PatchAll(Assembly.GetExecutingAssembly());
+                NoStopPatch.TryPatch();
             }
             else
             {
-                harmony.UnpatchAll(modEntry.Info.Id);
+                Harmony.UnpatchAll(modEntry.Info.Id);
             }
             return true;
         }
