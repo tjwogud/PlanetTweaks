@@ -31,5 +31,10 @@ namespace PlanetTweaks.Utils
         {
             planet.ToggleSpecialPlanet(planet.transform.Find("SparkPlanet").gameObject, false);
         }
+
+        public static void SwitchToSilver(this scrPlanet planet)
+        {
+            planet.SwitchToSpark(new Color(0.95f, 0.95f, 0.95f), new Color(0.85f, 0.85f, 0.85f), new Color(0.8f, 0.8f, 0.8f), new Color(0.65f, 0.65f, 0.65f), new Color(0.6f, 0.6f, 0.6f));
+        }
     }
 }

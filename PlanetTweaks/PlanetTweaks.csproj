@@ -115,6 +115,7 @@
     <Compile Include="Assets.cs" />
     <Compile Include="Components\PlanetImageRenderer.cs" />
     <Compile Include="Patch\SpecialPlanetPatch.cs" />
+    <Compile Include="Startup.cs" />
     <Compile Include="Utils\ParticleSystemUtils.cs" />
     <Compile Include="Patch\ControllerUpdatePatch.cs" />
     <Compile Include="Patch\NoStopPatch.cs" />

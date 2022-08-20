@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using PlanetTweaks.Patch;
 using PlanetTweaks.UI;
 using PlanetTweaks.Utils;
 using PlayTweaks.Components;
@@ -17,22 +18,6 @@ namespace PlanetTweaks
         public static Harmony Harmony;
         public static bool IsEnabled = false;
         public static Settings Settings;
-
-        public static void Load(UnityModManager.ModEntry modEntry)
-        {
-            LoadAssembly("Mods/PlanetTweaks/PlanetTweaks.UI.dll");
-            Setup(modEntry);
-        }
-
-        private static void LoadAssembly(string path)
-        {
-            using (FileStream stream = new FileStream(path, FileMode.Open))
-            {
-                byte[] data = new byte[stream.Length];
-                stream.Read(data, 0, data.Length);
-                AppDomain.CurrentDomain.Load(data);
-            }
-        }
 
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
@@ -63,6 +48,7 @@ namespace PlanetTweaks
             {
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
+                NoStopPatch.TryPatch();
             }
             else
             {

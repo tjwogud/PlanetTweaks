@@ -5,18 +5,25 @@ using UnityModManagerNet;
 
 namespace PlanetTweaks.Patch
 {
-    [HarmonyPatch]
     public static class NoStopPatch
     {
-        public static MethodBase TargetMethod() => UnityModManager
-            .FindMod("NoStopMod")?
-            .Assembly
-            .GetType("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager")?
-            .GetMethod("ShouldBeIgnored");
+        private static MethodInfo original;
 
-        public static bool Prepare(MethodBase original) => original != null;
+        public static void TryPatch()
+        {
+            if (original != null)
+                Main.Harmony.Unpatch(original, HarmonyPatchType.Postfix, Main.ModEntry.Info.Id);
+            try
+            {
+                Main.Harmony.Patch(original = AccessTools.Method("NoStopMod.InputFixer.HitIgnore.HitIgnoreManager:ShouldBeIgnored"), postfix: new HarmonyMethod(typeof(NoStopPatch), "ShouldBeIgnoredPostfix"));
+            }
+            catch (Exception)
+            {
+                original = null;
+            }
+        }
 
-        public static void Postfix(int keyCode, ref bool __result)
+        public static void ShouldBeIgnoredPostfix(int keyCode, ref bool __result)
         {
             if (scrController.isGameWorld || (keyCode != 61000 && keyCode != 61008))
                 return;
@@ -24,6 +31,17 @@ namespace PlanetTweaks.Patch
             float y = (float)Math.Round(scrController.instance.chosenplanet.transform.position.y);
             if ((x == 3 || x == -3) && (y >= -18 && y <= -7))
                 __result = true;
+        }
+
+        [HarmonyPatch(typeof(UnityModManager.ModEntry), "Load")]
+        public static class LoadPatch
+        {
+            public static void Postfix(UnityModManager.ModEntry __instance)
+            {
+                if (__instance.Info.Id != "NoStopMod")
+                    return;
+                TryPatch();
+            }
         }
     }
 }
