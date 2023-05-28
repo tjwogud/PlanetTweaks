@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using PlanetTweaks.Components;
 using PlanetTweaks.Utils;
 using System.Linq;
 using UnityEngine;
@@ -13,7 +14,9 @@ namespace PlanetTweaks.Patch
         {
             if (__instance.transform.Find("PlanetTweaksRenderer"))
                 return;
-            var renderer = new GameObject("PlanetTweaksRenderer").AddComponent<SpriteRenderer>();
+            GameObject obj = new GameObject("PlanetTweaksRenderer");
+            obj.AddComponent<RendererController>();
+            var renderer = obj.AddComponent<SpriteRenderer>();
             renderer.sortingOrder = __instance.sprite.sortingOrder + 1;
             renderer.sortingLayerID = __instance.faceDetails.sortingLayerID;
             renderer.sortingLayerName = __instance.faceDetails.sortingLayerName;
@@ -32,7 +35,6 @@ namespace PlanetTweaks.Patch
                     renderer.color = ColorUtils.GetColor(false);
                 Main.Logger.Log("BluePlanet " + __instance.name);
             }
-            renderer.enabled = __instance.sprite.enabled;
         }
     }
 
@@ -52,7 +54,6 @@ namespace PlanetTweaks.Patch
                     __instance.SetPlanetColor(Main.Settings.ThirdColor());
                     __instance.SetTailColor(Main.Settings.ThirdColor());
                 }
-            __instance.transform.GetComponentsInChildren<SpriteRenderer>().Last().enabled = __instance.sprite.enabled;
         }
     }
 
@@ -66,7 +67,6 @@ namespace PlanetTweaks.Patch
             scrController.instance.allPlanets[2].SetPlanetColor(Main.Settings.ThirdColor());
             scrController.instance.allPlanets[2].SetTailColor(Main.Settings.ThirdColor());
             SpriteRenderer renderer = scrController.instance.allPlanets[2].transform.GetComponentsInChildren<SpriteRenderer>().Last();
-            renderer.enabled = scrController.instance.allPlanets[2].sprite.enabled;
             renderer.transform.localScale = new Vector3(Main.Settings.thirdSize, Main.Settings.thirdSize);
             if (Main.Settings.thirdColor)
                 renderer.color = Main.Settings.ThirdColor();

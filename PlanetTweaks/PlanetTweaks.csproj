@@ -106,6 +106,7 @@
   <ItemGroup>
     <Compile Include="Components\GifRenderer.cs" />
     <Compile Include="Components\RenameInputField.cs" />
+    <Compile Include="Components\RendererController.cs" />
     <Compile Include="Utils\GifImage.cs" />
     <Compile Include="Patch\ControllerUpdatePatch.cs" />
     <Compile Include="Patch\PlanetImagePatch.cs" />
