@@ -1,4 +1,6 @@
-﻿using ByteSheep.Events;
+﻿using ADOFAI.ModdingConvenience;
+using ByteSheep.Events;
+using DG.Tweening;
 using UnityEngine;
 
 namespace PlanetTweaks.Utils
@@ -7,27 +9,15 @@ namespace PlanetTweaks.Utils
     {
         public static scrFloor AddFloor(float x, float y, Transform parent = null)
         {
-            var obj = Object.Instantiate(GetFloorGameObjectAt(1, 0).GetComponent<scrFloor>(), parent);
-            obj.transform.position = new Vector3(x, y);
-            return obj;
-        }
-
-        public static scrFloor AddFloorAt(float floorX, float floorY, float x, float y, Transform parent = null)
-        {
-            var floor = GetFloorGameObjectAt(floorX, floorY)?.GetComponent<scrFloor>();
-            if (floor == null)
-                return null;
-            var obj = Object.Instantiate(floor, parent);
+            var obj = CreateFloor(parent);
             obj.transform.position = new Vector3(x, y);
             return obj;
         }
 
         public static scrFloor AddEventFloor(float x, float y, QuickAction action, Transform parent = null)
         {
-            var obj = AddFloorAt(0, -3, x, y, parent);
-            if (!obj)
-                return null;
-            Object.Destroy(obj.gameObject.GetComponent<ffxCallFunction>());
+            var obj = CreateGem(parent);
+            obj.transform.position = new Vector3(x, y);
             var func = obj.gameObject.AddComponent<ffxCallFunction>();
             func.ue = new QuickEvent();
             func.ue.persistentCalls = new QuickPersistentCallGroup();
@@ -52,16 +42,37 @@ namespace PlanetTweaks.Utils
                     scrController.instance.camy.isMoveTweening = cameraMoving;
                     scrController.instance.camy.positionState = state;
                     scrUIController.instance.WipeFromBlack();
-                    scrFloor component = GetFloorGameObjectAt(targetX, targetY).GetComponent<scrFloor>();
-                    scrController.instance.chosenplanet.currfloor = component;
+                    scrFloor component = GetFloor(targetX, targetY).GetComponent<scrFloor>();
+                    scrController.instance.planetList.ForEach(p => p.currfloor = component);
                 });
             }, parent);
         }
 
-        public static GameObject GetFloorGameObjectAt(float x, float y)
+        public static scrFloor CreateFloor(Transform parent = null)
+        {
+            return Object.Instantiate(PrefabLibrary.instance.scnLevelSelectFloorPrefab, parent);
+        }
+
+        public static scrFloor CreateGem(Transform parent = null)
+        {
+            scrFloor floor = Object.Instantiate(GameObject.Find("outer ring").transform.Find("ChangingRoomGem").Find("MovingGem"), parent).GetComponent<scrFloor>();
+            Object.DestroyImmediate(floor.GetComponent<scrGem>());
+            Object.DestroyImmediate(floor.GetComponent<scrDisableIfWorldNotComplete>());
+            Object.DestroyImmediate(floor.GetComponent<scrMenuMovingFloor>());
+            Object.DestroyImmediate(floor.GetComponent<ffxCallFunction>());
+            floor.DOKill(true);
+            floor.gameObject.SetActive(false);
+            scrGem gem = floor.gameObject.AddComponent<scrGem>();
+            gem.Method("LocalRotate");
+            Object.DestroyImmediate(gem);
+            floor.gameObject.SetActive(true);
+            return floor;
+        }
+
+        public static scrFloor GetFloor(float x, float y)
         {
             var array = Physics2D.OverlapPointAll(new Vector2(x, y), 1 << LayerMask.NameToLayer("Floor"));
-            return array.Length == 0 ? null : array[0].gameObject;
+            return array.Length == 0 ? null : array[0].gameObject.GetComponent<scrFloor>();
         }
     }
 }

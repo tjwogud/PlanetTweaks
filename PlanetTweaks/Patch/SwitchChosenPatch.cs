@@ -11,7 +11,7 @@ namespace PlanetTweaks.Patch
     {
         public static bool Prefix(scrPlanet __instance, ref scrPlanet __result)
         {
-            if (scrController.isGameWorld)
+            if (scnLevelSelect.instance == null)
                 return true;
             float x = (float)Math.Round(__instance.transform.position.x);
             float y = (float)Math.Round(__instance.transform.position.y);
@@ -34,7 +34,7 @@ namespace PlanetTweaks.Patch
 
         public static void Postfix(scrPlanet __instance, ref scrPlanet __result)
         {
-            if (scrController.isGameWorld)
+            if (scnLevelSelect.instance == null)
                 return;
             if (__instance == __result)
                 return;

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using PlanetTweaks.Components;
 using PlanetTweaks.Utils;
 using PlayTweaks.Components;
 using UnityEngine;
@@ -17,11 +18,22 @@ namespace PlanetTweaks.Patch
             {
                 if (!FloorUtils.AddTeleportFloor(-2, -3, -15, -3, -18, -3.5f, false, action2: delegate
                 {
-                    if (scrController.instance.redPlanet.isChosen)
-                        scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
+                    scrController.instance.chosenplanet = scrController.instance.redPlanet;
                     scrController.instance.camy.zoomSize = 0.5f;
                     scrController.instance.camy.isPulsingOnHit = false;
                     new GameObject().AddComponent<ImageChangePage>();
+                    if (Main.Settings.thirdPlanet)
+                    {
+                        scrController.instance.SetNumPlanets(3);
+                        scrFloor floor = FloorUtils.GetFloor(-15, -3);
+                        floor.numPlanets = 3;
+                        scrController.instance.redPlanet.currfloor = floor;
+                        scrController.instance.bluePlanet.currfloor = floor;
+                        scrController.instance.allPlanets[2].currfloor = floor;
+                        scrController.instance.redPlanet.Set("endingTween", 1);
+                        scrController.instance.bluePlanet.Set("endingTween", 1);
+                        scrController.instance.allPlanets[2].Set("endingTween", 1);
+                    }
                 }, parent: GameObject.Find("outer ring").transform))
                     return;
 
@@ -92,18 +104,17 @@ namespace PlanetTweaks.Patch
                         icon.transform.position = floor.transform.position;
                         icon.transform.ScaleXY(0.7f, 0.7f);
                     }
-                if (FloorUtils.GetFloorGameObjectAt(0, -3))
-                {
                     for (int i = -18; i < -6; i++)
                         for (int j = -3; j < 4; j += 6)
                         {
-                            GameObject obj = FloorUtils.GetFloorGameObjectAt(j, i);
+                            GameObject obj = FloorUtils.GetFloor(j, i).gameObject;
                             obj.GetComponent<scrFloor>().isLandable = false;
                             obj.SetActive(false);
                         }
                     leftMovingFloor = FloorUtils.AddEventFloor(-3, -7, null);
                     rightMovingFloor = FloorUtils.AddEventFloor(3, -7, null);
-                }
+                GameObject inputField = Object.Instantiate(Main.Bundle.LoadAsset<GameObject>("InputField"));
+                inputField.AddComponent<RenameInputField>();
             }
         }
     }

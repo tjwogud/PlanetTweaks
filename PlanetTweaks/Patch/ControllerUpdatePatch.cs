@@ -11,7 +11,7 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix()
         {
-            if (scrController.isGameWorld)
+            if (scnLevelSelect.instance == null)
                 return;
             float x = (float)Math.Round(scrController.instance.chosenplanet.transform.position.x);
             float y = (float)Math.Round(scrController.instance.chosenplanet.transform.position.y);

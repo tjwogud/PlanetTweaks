@@ -1,4 +1,6 @@
 ﻿using Ookii.Dialogs;
+using PlanetTweaks.Components;
+using PlanetTweaks.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,15 +12,14 @@ namespace PlanetTweaks
 {
     public static class Sprites
     {
-        public static Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
-        public static string[] imageFiles = new string[] { ".png", ".jpg", ".jpeg" };
+        public static IndexedDictionary<string, object> sprites = new IndexedDictionary<string, object>();
         private static VistaOpenFileDialog fileDialog;
         private static VistaFolderBrowserDialog dirDialog;
         public static int Size => 100;
         public static float FSize => Size;
 
-        private static Sprite redPreview;
-        public static Sprite RedPreview
+        private static object redPreview;
+        public static object RedPreview
         {
             get
             {
@@ -31,19 +32,12 @@ namespace PlanetTweaks
                 var planet = scrController.instance?.redPlanet;
                 if (planet == null)
                     return;
-                var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
-                renderer.enabled = true;
-                renderer.transform.position = planet.transform.position;
-                renderer.sprite = value;
-
-                if (value != null || RedSprite == null)
-                    return;
-                renderer.sprite = RedSprite;
+                Apply(planet, value ?? RedSprite);
             }
         }
 
-        private static Sprite bluePreview;
-        public static Sprite BluePreview
+        private static object bluePreview;
+        public static object BluePreview
         {
             get
             {
@@ -56,19 +50,31 @@ namespace PlanetTweaks
                 var planet = scrController.instance?.bluePlanet;
                 if (planet == null)
                     return;
-                var renderer = planet.transform.GetChild(planet.transform.childCount - 1).GetComponent<SpriteRenderer>();
-                renderer.enabled = true;
-                renderer.transform.position = planet.transform.position;
-                renderer.sprite = value;
-
-                if (value != null || BlueSprite == null)
-                    return;
-                renderer.sprite = BlueSprite;
+                Apply(planet, value ?? BlueSprite);
             }
         }
 
-        public static Sprite RedSprite { get; private set; }
-        public static Sprite BlueSprite { get; private set; }
+        private static object thirdPreview;
+        public static object ThirdPreview
+        {
+            get
+            {
+                return thirdPreview;
+            }
+
+            set
+            {
+                thirdPreview = value;
+                var planet = scrController.instance?.allPlanets[2];
+                if (planet == null)
+                    return;
+                Apply(planet, value ?? ThirdSprite);
+            }
+        }
+
+        public static object RedSprite { get; private set; }
+        public static object BlueSprite { get; private set; }
+        public static object ThirdSprite { get; private set; }
         public static int RedSelected
         {
             get
@@ -86,13 +92,13 @@ namespace PlanetTweaks
 
             set
             {
+                var planet = scrController.instance?.redPlanet;
+
                 if (value < 0)
                 {
                     Main.Settings.redSelected = null;
                     RedSprite = null;
-                    var planet = scrController.instance?.redPlanet;
-                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
-                    renderer.sprite = null;
+                    Apply(planet, null);
                     return;
                 }
                 else
@@ -102,13 +108,9 @@ namespace PlanetTweaks
                     Main.Settings.redSelected = sprites.Keys.ElementAt(value);
                     RedSprite = sprites.ElementAt(value).Value;
 
-                    var planet = scrController.instance?.redPlanet;
                     if (planet == null)
                         return;
-                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
-                    renderer.enabled = true;
-                    renderer.transform.position = planet.transform.position;
-                    renderer.sprite = RedSprite;
+                    Apply(planet, RedSprite);
                 }
             }
         }
@@ -129,13 +131,12 @@ namespace PlanetTweaks
 
             set
             {
+                var planet = scrController.instance?.bluePlanet;
                 if (value < 0)
                 {
                     Main.Settings.blueSelected = null;
                     BlueSprite = null;
-                    var planet = scrController.instance?.bluePlanet;
-                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
-                    renderer.sprite = null;
+                    Apply(planet, null);
                     return;
                 }
                 else
@@ -145,23 +146,82 @@ namespace PlanetTweaks
                     Main.Settings.blueSelected = sprites.Keys.ElementAt(value);
                     BlueSprite = sprites.ElementAt(value).Value;
 
-                    var planet = scrController.instance?.bluePlanet;
                     if (planet == null)
                         return;
-                    var renderer = planet.transform.GetComponentsInChildren<SpriteRenderer>().Last();
-                    renderer.enabled = true;
-                    renderer.transform.position = planet.transform.position;
-                    renderer.sprite = BlueSprite;
+                    Apply(planet, BlueSprite);
                 }
+            }
+        }
+        public static int ThirdSelected
+        {
+            get
+            {
+                if (Main.Settings.thirdSelected == null)
+                    return -1;
+                if (sprites.ContainsKey(Main.Settings.thirdSelected))
+                    return sprites.Keys.ToList().IndexOf(Main.Settings.thirdSelected);
+                else
+                {
+                    Main.Settings.thirdSelected = null;
+                    return -1;
+                }
+            }
+
+            set
+            {
+                var planet = scrController.instance?.allPlanets[2];
+                if (value < 0)
+                {
+                    Main.Settings.thirdSelected = null;
+                    ThirdSprite = null;
+                    Apply(planet, null);
+                    return;
+                }
+                else
+                {
+                    if (value >= sprites.Count)
+                        return;
+                    Main.Settings.thirdSelected = sprites.Keys.ElementAt(value);
+                    ThirdSprite = sprites.ElementAt(value).Value;
+
+                    if (planet == null)
+                        return;
+                    Apply(planet, ThirdSprite);
+                }
+            }
+        }
+
+        public static void Apply(scrPlanet planet, object v)
+        {
+            SpriteRenderer renderer = planet.GetComponentsInChildren<SpriteRenderer>().Last();
+            renderer.transform.position = planet.transform.position;
+            Apply(renderer, v);
+        }
+
+        public static void Apply(SpriteRenderer renderer, object v)
+        {
+            renderer.enabled = true;
+            UnityEngine.Object.DestroyImmediate(renderer.GetComponent<GifRenderer>());
+            if (v is Sprite spr)
+            {
+                renderer.sprite = spr;
+            }
+            else if (v is GifImage gif)
+            {
+                renderer.sprite = gif.Thumbnail;
+                GifRenderer gifRenderer = renderer.gameObject.AddComponent<GifRenderer>();
+                gifRenderer.Image = gif;
+                gifRenderer.Renderer = renderer;
+            }
+            else if (v == null)
+            {
+                renderer.sprite = null;
             }
         }
 
         public static void Init()
         {
             fileDialog = new VistaOpenFileDialog();
-            var filesEnumerable = from string str in imageFiles select "*" + str;
-            string files = string.Join(";", filesEnumerable);
-            fileDialog.Filter = "Image Files(" + files + ")|" + files;
             fileDialog.Multiselect = false;
 
             dirDialog = new VistaFolderBrowserDialog();
@@ -222,8 +282,6 @@ namespace PlanetTweaks
             DirectoryInfo dir = Main.Settings.spriteDirectory.CreateIfNotExists();
             foreach (FileInfo file in dir.GetFiles())
             {
-                if (!file.Name.IsImageFile())
-                    continue;
                 try
                 {
                     file.Delete();
@@ -232,14 +290,39 @@ namespace PlanetTweaks
                 {
                 }
             }
+            foreach (DirectoryInfo directory in dir.GetDirectories())
+            {
+                try
+                {
+                    foreach (FileInfo file in directory.GetFiles())
+                    {
+                        try
+                        {
+                            file.Delete();
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    directory.Delete();
+                } catch (Exception)
+                {
+                }
+            }
             foreach (var pair in sprites)
             {
                 try
                 {
-                    Texture2D texture = pair.Value.texture;
-                    byte[] bytes = texture.EncodeToPNG();
-                    string path = Path.Combine(dir.FullName, pair.Key + ".png");
-                    File.WriteAllBytes(path, bytes);
+                    if (pair.Value is Sprite spr)
+                    {
+                        Texture2D texture = spr.texture;
+                        byte[] bytes = texture.EncodeToPNG();
+                        string path = Path.Combine(dir.FullName, pair.Key + ".png");
+                        File.WriteAllBytes(path, bytes);
+                    } else if (pair.Value is GifImage gif)
+                    {
+                        gif.Save(dir.FullName, pair.Key);
+                    }
                 }
                 catch (Exception)
                 {
@@ -249,18 +332,27 @@ namespace PlanetTweaks
 
         public static void Add(string fileName)
         {
-            if (!fileName.IsImageFile())
-                throw new ArgumentException("file is not image file! (supporting files : " + string.Join(", ", imageFiles) + ")");
             if (!File.Exists(fileName))
                 throw new ArgumentException("file doesn't exists!");
-            Sprite sprite = File.ReadAllBytes(fileName).ToSprite();
             string name = new FileInfo(fileName).Name;
             name = name.Substring(0, name.LastIndexOf('.'));
             string first = name;
             for (int i = 1; sprites.ContainsKey(name); i++)
                 name = first + i;
-            sprite.name = name;
-            sprites.Add(name, sprite);
+            if (fileName.EndsWith(".gif"))
+            {
+                sprites.Add(name, new GifImage(fileName));
+            }
+            else if (fileName.EndsWith(".gifmeta"))
+            {
+                sprites.Add(name, GifImage.Load(fileName));
+            }
+            else
+            {
+                Sprite sprite = File.ReadAllBytes(fileName).ToSprite();
+                sprite.name = name;
+                sprites.Add(name, sprite);
+            }
         }
 
         public static bool Remove(string name)
@@ -271,6 +363,8 @@ namespace PlanetTweaks
                 RedSelected = -1;
             if (Main.Settings.blueSelected == name)
                 BlueSelected = -1;
+            if (Main.Settings.thirdSelected == name)
+                ThirdSelected = -1;
             sprites.Remove(name);
             return true;
         }
@@ -322,17 +416,6 @@ namespace PlanetTweaks
                 return Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
             }
             return null;
-        }
-
-        public static bool IsImageFile(this string file)
-        {
-            string extension = file.Substring(file.LastIndexOf('.')).ToLower();
-            foreach (var extension2 in imageFiles)
-            {
-                if (extension.Equals(extension2))
-                    return true;
-            }
-            return false;
         }
     }
 }

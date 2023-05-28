@@ -1,9 +1,11 @@
 ﻿using ByteSheep.Events;
 using DG.Tweening;
 using PlanetTweaks;
+using PlanetTweaks.Components;
 using PlanetTweaks.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -98,14 +100,14 @@ namespace PlayTweaks.Components
             events.Add(new Rect(1920 - 400, 1080 - 150, 400, 150), new ButtonEvent(
             delegate
             {
-                var floor = FloorUtils.GetFloorGameObjectAt(-13.9f, -5.65f).GetComponent<scrFloor>();
-                floor.transform.DOKill(false);
+                var floor = FloorUtils.GetFloor(-13.9f, -5.65f);
+                floor.DOKill(false);
                 floor.transform.DOScale(new Vector3(0.55f, 0.55f), 0.5f);
             },
             delegate
             {
-                var floor = FloorUtils.GetFloorGameObjectAt(-13.9f, -5.65f).GetComponent<scrFloor>();
-                floor.transform.DOKill(false);
+                var floor = FloorUtils.GetFloor(-13.9f, -5.65f);
+                floor.DOKill(false);
                 floor.transform.DOScale(new Vector3(0.5f, 0.5f), 0.5f);
             },
             delegate
@@ -113,29 +115,23 @@ namespace PlayTweaks.Components
                 RDUtils.SetGarbageCollectionEnabled(true);
                 scrController.instance.Set("exitingToMainMenu", true);
                 Destroy();
+                GCS.sceneToLoad = GCNS.sceneLevelSelect;
                 scrUIController.instance.WipeToBlack(WipeDirection.StartsFromRight, delegate
                 {
-                    scrController.instance.printe("killing all tweens");
                     DOTween.KillAll(false);
                     SceneManager.LoadScene("scnLoading");
                 });
-                GCS.sceneToLoad = (GCS.customLevelPaths == null) ? GCNS.sceneLevelSelect : "scnCLS";
-                GCS.standaloneLevelMode = false;
-                scrController.deaths = 0;
-                GCS.currentSpeedTrial = 1f;
             }));
             // 공 바꾸기
             events.Add(new Rect(1920 - 615, 1080 - 950, 600, 600), new ButtonEvent(
             delegate
             {
-                var floor = FloorUtils.GetFloorGameObjectAt(-15, -3).GetComponent<scrFloor>();
-                floor.transform.DOKill(false);
+                var floor = FloorUtils.GetFloor(-15, -3);
                 floor.transform.DOScale(new Vector3(1, 1), 0.5f);
             },
             delegate
             {
-                var floor = FloorUtils.GetFloorGameObjectAt(-15, -3).GetComponent<scrFloor>();
-                floor.transform.DOKill(false);
+                var floor = FloorUtils.GetFloor(-15, -3);
                 floor.transform.DOScale(new Vector3(0.8f, 0.8f), 0.5f);
             },
             delegate
@@ -144,23 +140,27 @@ namespace PlayTweaks.Components
                 scrUIController.instance.WipeToBlack(WipeDirection.StartsFromRight, delegate
                 {
                     instance.changing = false;
-                    scrController.instance.chosenplanet = scrController.instance.chosenplanet.other;
+                    List<scrPlanet> planets = scrController.instance.planetList;
+                    scrController.instance.chosenplanet = scrController.instance.chosenplanet.next;
                     scrController.instance.chosenplanet.transform.LocalMoveXY(-15, -3);
                     scrController.instance.chosenplanet.transform.position = new Vector3(-15, -3);
                     if (RDString.language == SystemLanguage.Korean)
                     {
                         if (scrController.instance.chosenplanet.isRed)
+                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">불 행성</color> 선택됨";
+                        else if (!scrController.instance.chosenplanet.isExtra)
                             instance.planetText.text = "<color=" + ColorUtils.GetColor(false).ToHex() + ">얼음 행성</color> 선택됨";
                         else
-                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">불 행성</color> 선택됨";
-                    } else
+                            instance.planetText.text = "<color=" + Main.Settings.ThirdColor().ToHex() + ">세번째 행성</color> 선택됨";
+                    }
                     {
                         if (scrController.instance.chosenplanet.isRed)
+                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">Fire Planet</color> Selected";
+                        else if (!scrController.instance.chosenplanet.isExtra)
                             instance.planetText.text = "<color=" + ColorUtils.GetColor(false).ToHex() + ">Ice Planet</color> Selected";
                         else
-                            instance.planetText.text = "<color=" + ColorUtils.GetColor(true).ToHex() + ">Fire Planet</color> Selected";
+                            instance.planetText.text = "<color=" + Main.Settings.ThirdColor().ToHex() + ">Third Planet</color> Selected";
                     }
-                    instance.UpdateFloorIcons();
                     scrUIController.instance.WipeFromBlack();
                 });
             }));
@@ -175,13 +175,13 @@ namespace PlayTweaks.Components
                         events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 112 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
                         delegate
                         {
-                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(0.9f, 0.9f), 0.5f);
                         },
                         delegate
                         {
-                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(0.8f, 0.8f), 0.5f);
                         },
@@ -200,22 +200,25 @@ namespace PlayTweaks.Components
                             }
                         }));
                     else
+                    {
                         events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 112 + j * 238 + (j > 1 ? -1 : 0), 164, 164), new ButtonEvent(
                         delegate
                         {
-                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
                             if (floor.GetIcon().sprite == null)
                                 return;
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(1, 1), 0.5f).OnComplete(delegate
                             {
-                                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == instance.page * 23 + copyJ * 6 + copyI)
+                                if ((scrController.instance.chosenplanet.isRed ? Sprites.RedSelected : (!scrController.instance.chosenplanet.isExtra ? Sprites.BlueSelected : Sprites.ThirdSelected)) == instance.page * 23 + copyJ * 6 + copyI)
                                     return;
                                 floor.GetPreview().gameObject.SetActive(true);
-                                if (scrController.instance.redPlanet.isChosen)
+                                if (scrController.instance.chosenplanet.isRed)
+                                    Sprites.RedPreview = floor.GetIcon().sprite;
+                                else if (!scrController.instance.chosenplanet.isExtra)
                                     Sprites.BluePreview = floor.GetIcon().sprite;
                                 else
-                                    Sprites.RedPreview = floor.GetIcon().sprite;
+                                    Sprites.ThirdPreview = floor.GetIcon().sprite;
                             }).SetAutoKill(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOKill(false);
@@ -223,21 +226,23 @@ namespace PlayTweaks.Components
                         },
                         delegate
                         {
-                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
                             floor.transform.DOKill(false);
                             floor.transform.DOScale(new Vector3(0.8f, 0.8f), 0.5f);
                             floor.GetPreview().gameObject.SetActive(false);
                             var sprite = floor.GetIcon();
                             sprite.transform.DOKill(false);
                             sprite.transform.DOScale(new Vector3(0.7f, 0.7f), 0.5f);
-                            if (scrController.instance.redPlanet.isChosen)
+                            if (scrController.instance.chosenplanet.isRed)
+                                Sprites.RedPreview = null;
+                            else if (!scrController.instance.chosenplanet.isExtra)
                                 Sprites.BluePreview = null;
                             else
-                                Sprites.RedPreview = null;
+                                Sprites.ThirdPreview = null;
                         },
                         delegate
                         {
-                            var floor = FloorUtils.GetFloorGameObjectAt(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f).GetComponent<scrFloor>();
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
                             if (floor.GetIcon().sprite == null)
                                 return;
                             floor.transform.DOComplete(false);
@@ -246,32 +251,80 @@ namespace PlayTweaks.Components
                             sprite.transform.DOComplete(false);
                             int index = instance.page * 23 + copyJ * 6 + copyI;
                             if (Input.GetMouseButtonUp(0))
-                                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == index)
+                                if ((scrController.instance.chosenplanet.isRed ? Sprites.RedSelected : (!scrController.instance.chosenplanet.isExtra ? Sprites.BlueSelected : Sprites.ThirdSelected)) == index)
                                 {
-                                    if (scrController.instance.redPlanet.isChosen)
+                                    if (scrController.instance.chosenplanet.isRed)
+                                        Sprites.RedSelected = -1;
+                                    else if (!scrController.instance.chosenplanet.isExtra)
                                         Sprites.BlueSelected = -1;
                                     else
-                                        Sprites.RedSelected = -1;
+                                        Sprites.ThirdSelected = -1;
                                 }
                                 else
                                 {
-                                    if (scrController.instance.redPlanet.isChosen)
+                                    if (scrController.instance.chosenplanet.isRed)
+                                        Sprites.RedSelected = index;
+                                    else if (!scrController.instance.chosenplanet.isExtra)
                                         Sprites.BlueSelected = index;
                                     else
-                                        Sprites.RedSelected = index;
+                                        Sprites.ThirdSelected = index;
                                 }
                             else if (Input.GetMouseButtonUp(1))
                             {
                                 Sprites.Remove(index);
-                                if (scrController.instance.redPlanet.isChosen)
+                                if (scrController.instance.chosenplanet.isRed)
+                                    Sprites.RedPreview = null;
+                                else if(!scrController.instance.chosenplanet.isExtra)
                                     Sprites.BluePreview = null;
                                 else
-                                    Sprites.RedPreview = null;
+                                    Sprites.ThirdPreview = null;
                             }
                             else
                                 return;
                             instance.UpdateFloorIcons();
                         }));
+
+                        events.Add(new Rect(79 + i * 194 + (i > 1 ? i > 4 ? 2 : 1 : 0), 112 + j * 238 + (j > 1 ? -1 : 0) + 168, 164, 40), new ButtonEvent(
+                        delegate
+                        {
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
+                            var text = floor.GetName();
+                            text.DOKill(false);
+                            DOTween.To(() => text.color, c => text.color = c, Color.yellow, 0.5f).SetTarget(text);
+                        },
+                        delegate
+                        {
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
+                            var text = floor.GetName();
+                            text.DOKill(false);
+                            DOTween.To(() => text.color, c => text.color = c, Color.white, 0.5f).SetTarget(text);
+                        },
+                        delegate
+                        {
+                            var floor = FloorUtils.GetFloor(-21.7f + copyI * 0.9f, -1.7f - copyJ * 1.1f);
+                            var text = floor.GetName();
+                            int index = instance.page * 23 + copyJ * 6 + copyI;
+                            if (index >= Sprites.sprites.Count)
+                                return;
+                            instance.input = true;
+                            RenameInputField.Instance.Show(text.text, s =>
+                            {
+                                instance.input = false;
+                                if (s.Trim().IsNullOrEmpty() || s == text.text)
+                                    return;
+                                s = Path.GetInvalidPathChars().Aggregate(s, (cur, c) => cur.Replace(c.ToString(), "_"));
+                                string first = s;
+                                for (int k = 1; Sprites.sprites.ContainsKey(s); k++)
+                                    s = first + k;
+                                if (index == Sprites.RedSelected)
+                                    Main.Settings.redSelected = s;
+                                if (index == Sprites.BlueSelected)
+                                    Main.Settings.blueSelected = s;
+                                text.text = s;
+                                Sprites.sprites.Replace(index, s, Sprites.sprites.ElementAt(index).Value);
+                            });
+                        }));
+                    }
                 }
             }
         }
@@ -284,9 +337,9 @@ namespace PlayTweaks.Components
             for (int i = 0; i < images.transform.childCount - 1; i++)
             {
                 var obj = images.transform.GetChild(i);
-                obj.GetIcon().sprite = null;
+                Sprites.Apply(obj.GetIcon(), null);
                 obj.GetName().text = null;
-                if ((scrController.instance.redPlanet.isChosen ? Sprites.BlueSelected : Sprites.RedSelected) == i + page * 23)
+                if ((scrController.instance.chosenplanet.isRed ? Sprites.RedSelected : (!scrController.instance.chosenplanet.isExtra ? Sprites.BlueSelected : Sprites.ThirdSelected)) == i + page * 23)
                     obj.GetFloor().SetTileColor(Color.yellow);
                 else
                     obj.GetFloor().SetTileColor(floorColor);
@@ -297,7 +350,7 @@ namespace PlayTweaks.Components
                     break;
                 var pair = Sprites.sprites.ElementAt(i + page * 23);
                 var obj = images.transform.GetChild(i);
-                obj.GetIcon().sprite = pair.Value;
+                Sprites.Apply(obj.GetIcon(), pair.Value);
                 obj.GetName().text = pair.Key;
             }
             if (RDString.language == SystemLanguage.Korean)
@@ -339,7 +392,7 @@ namespace PlayTweaks.Components
                                         });
                                         break;
                                     }
-                                    floor = FloorUtils.GetFloorGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+                                    floor = FloorUtils.GetFloor(-21.7f + i * 0.9f, -1.7f - j * 1.1f);
                                     var fr2 = floor.floorRenderer;
                                     fr2.color = fr2.color.WithAlpha(0);
                                     fade = DOTween.To(() => fr2.color, c => fr2.color = c, fr2.color.WithAlpha(1), 0.5f);
@@ -349,7 +402,7 @@ namespace PlayTweaks.Components
                         });
                         break;
                     }
-                    floor = FloorUtils.GetFloorGameObjectAt(-21.7f + i * 0.9f, -1.7f - j * 1.1f).GetComponent<scrFloor>();
+                    floor = FloorUtils.GetFloor(-21.7f + i * 0.9f, -1.7f - j * 1.1f);
                     var fr = floor.floorRenderer;
                     fade = DOTween.To(() => fr.color, c => fr.color = c, fr.color.WithAlpha(0), 0.5f);
                     floor.GetName().gameObject.GetComponent<MeshRenderer>().material.DOFade(0, 0.5f);
@@ -358,6 +411,7 @@ namespace PlayTweaks.Components
         }
 
         //private bool propertyPage = false;
+        private bool input = false;
         private bool changing = false;
 
         private int page = 0;
@@ -454,10 +508,9 @@ namespace PlayTweaks.Components
                 {
                     var rect = pair.Key.Fix();
                     var btnEvent = pair.Value;
-
                     if (!btnEvent.Entered && rect.Contains(mouse))
                     {
-                        if (!changing && !UnityModManager.UI.Instance.Opened)
+                        if (!input && !changing && !UnityModManager.UI.Instance.Opened)
                         {
                             btnEvent.Entered = true;
                             btnEvent.OnEntered.Invoke();
@@ -469,7 +522,7 @@ namespace PlayTweaks.Components
                         btnEvent.OnExited.Invoke();
                     }
 
-                    if (!changing && !UnityModManager.UI.Instance.Opened)
+                    if (!input && !changing && !UnityModManager.UI.Instance.Opened)
                         if (GUI.Button(rect, "", GUIStyle.none))
                             btnEvent.OnClicked.Invoke();
                 }
