@@ -58,7 +58,6 @@ namespace PlanetTweaks.Utils
             scrFloor floor = Object.Instantiate(GameObject.Find("outer ring").transform.Find("ChangingRoomGem").Find("MovingGem"), parent).GetComponent<scrFloor>();
             Object.DestroyImmediate(floor.GetComponent<scrGem>());
             Object.DestroyImmediate(floor.GetComponent<scrDisableIfWorldNotComplete>());
-            Object.DestroyImmediate(floor.GetComponent<scrMenuMovingFloor>());
             Object.DestroyImmediate(floor.GetComponent<ffxCallFunction>());
             floor.DOKill(true);
             floor.gameObject.SetActive(false);

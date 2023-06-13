@@ -11,13 +11,13 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix()
         {
-            if (scnLevelSelect.instance == null)
+            if (!scnLevelSelect.instance || !scrController.instance || !scrCamera.instance || !IntroFloorPatch.leftMovingFloor || !IntroFloorPatch.rightMovingFloor)
                 return;
             float x = (float)Math.Round(scrController.instance.chosenplanet.transform.position.x);
             float y = (float)Math.Round(scrController.instance.chosenplanet.transform.position.y);
             if ((x == 3 || x == -3) && (y >= -18 && y <= -7))
             {
-                if (y <= -8 && (Input.GetKeyDown(KeyCode.UpArrow) || Input.mouseScrollDelta.y > 0.4f))
+                if (y <= -8 && (KeyCode.UpArrow.WentDown() || Input.mouseScrollDelta.y > 0.4f))
                 {
                     scrController.instance.chosenplanet.transform.DOComplete();
                     IntroFloorPatch.leftMovingFloor.transform.DOComplete();
@@ -29,7 +29,7 @@ namespace PlanetTweaks.Patch
                     scrCamera.instance.topos = new Vector3(x, y + 1, -10);
                     scrCamera.instance.timer = 0;
                 }
-                else if (y >= -17 && (Input.GetKeyDown(KeyCode.DownArrow) || Input.mouseScrollDelta.y < -0.4f))
+                else if (y >= -17 && (KeyCode.DownArrow.WentDown() || Input.mouseScrollDelta.y < -0.4f))
                 {
                     scrController.instance.chosenplanet.transform.DOComplete();
                     IntroFloorPatch.leftMovingFloor.transform.DOComplete();

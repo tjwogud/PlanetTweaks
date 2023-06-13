@@ -15,6 +15,27 @@ namespace PlanetTweaks
         public static IndexedDictionary<string, object> sprites = new IndexedDictionary<string, object>();
         private static VistaOpenFileDialog fileDialog;
         private static VistaFolderBrowserDialog dirDialog;
+
+        public static SpriteRenderer GetOrAddRenderer(this scrPlanet planet)
+        {
+            if (!planet)
+                return null;
+            SpriteRenderer renderer = planet.transform.Find("PlanetTweaksRenderer")?.GetComponent<SpriteRenderer>();
+            if (!renderer)
+            {
+                GameObject obj = new GameObject("PlanetTweaksRenderer");
+                obj.AddComponent<RendererController>();
+                renderer = obj.AddComponent<SpriteRenderer>();
+                renderer.sortingOrder = planet.sprite.sortingOrder + 1;
+                renderer.sortingLayerID = planet.faceDetails.sortingLayerID;
+                renderer.sortingLayerName = planet.faceDetails.sortingLayerName;
+                renderer.transform.SetParent(planet.transform);
+                renderer.transform.position = planet.transform.position;
+                Apply(renderer, planet.isRed ? RedSprite : (!planet.isExtra ? BlueSprite : ThirdSprite));
+            }
+            return renderer;
+        }
+
         public static int Size => 100;
         public static float FSize => Size;
 
@@ -105,8 +126,9 @@ namespace PlanetTweaks
                 {
                     if (value >= sprites.Count)
                         return;
-                    Main.Settings.redSelected = sprites.Keys.ElementAt(value);
-                    RedSprite = sprites.ElementAt(value).Value;
+                    var pair = sprites.ElementAt(value);
+                    Main.Settings.redSelected = pair.Key;
+                    RedSprite = pair.Value;
 
                     if (planet == null)
                         return;
@@ -143,8 +165,9 @@ namespace PlanetTweaks
                 {
                     if (value >= sprites.Count)
                         return;
-                    Main.Settings.blueSelected = sprites.Keys.ElementAt(value);
-                    BlueSprite = sprites.ElementAt(value).Value;
+                    var pair = sprites.ElementAt(value);
+                    Main.Settings.blueSelected = pair.Key;
+                    BlueSprite = pair.Value;
 
                     if (planet == null)
                         return;
@@ -181,8 +204,9 @@ namespace PlanetTweaks
                 {
                     if (value >= sprites.Count)
                         return;
-                    Main.Settings.thirdSelected = sprites.Keys.ElementAt(value);
-                    ThirdSprite = sprites.ElementAt(value).Value;
+                    var pair = sprites.ElementAt(value);
+                    Main.Settings.thirdSelected = pair.Key;
+                    ThirdSprite = pair.Value;
 
                     if (planet == null)
                         return;
@@ -193,7 +217,7 @@ namespace PlanetTweaks
 
         public static void Apply(scrPlanet planet, object v)
         {
-            SpriteRenderer renderer = planet.GetComponentsInChildren<SpriteRenderer>().Last();
+            SpriteRenderer renderer = planet.GetOrAddRenderer();
             renderer.transform.position = planet.transform.position;
             Apply(renderer, v);
         }

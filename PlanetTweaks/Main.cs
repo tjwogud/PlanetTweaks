@@ -52,6 +52,13 @@ namespace PlanetTweaks
             {
                 Harmony.UnpatchAll(modEntry.Info.Id);
             }
+            if (scrController.instance)
+                foreach (scrPlanet planet in scrController.instance?.allPlanets)
+                {
+                    SpriteRenderer renderer = planet.GetOrAddRenderer();
+                    if (!value)
+                        UnityEngine.Object.Destroy(renderer.gameObject);
+                }
             return true;
         }
 
@@ -119,44 +126,44 @@ namespace PlanetTweaks
             GUILayout.Space(10);
             bool redColor = GUILayout.Toggle(Settings.redColor,
                 (RDString.language == SystemLanguage.Korean
-                ? $"<color={ColorUtils.GetColor(true).ToHex()}>불 행성</color> 색을 이미지에 적용"
-                : $"Apply <color={ColorUtils.GetColor(true).ToHex()}>Fire Planet</color> Color To Image"
+                ? $"<color={ColorUtils.GetRealColor(true).ToHex()}>불 행성</color> 색을 이미지에 적용"
+                : $"Apply <color={ColorUtils.GetRealColor(true).ToHex()}>Fire Planet</color> Color To Image"
                 ) + $"  <color=grey>{(Settings.redColor ? "O" : "Ⅹ")}</color>",
                 labelStyle);
             bool redColorChange = Settings.redColor != redColor;
             GUILayout.Space(5);
             bool blueColor = GUILayout.Toggle(Settings.blueColor,
                 (RDString.language == SystemLanguage.Korean
-                ? $"<color={ColorUtils.GetColor(false).ToHex()}>얼음 행성</color> 색을 이미지에 적용"
-                : $"Apply <color={ColorUtils.GetColor(false).ToHex()}>Ice Planet</color> Color To Image"
+                ? $"<color={ColorUtils.GetRealColor(false).ToHex()}>얼음 행성</color> 색을 이미지에 적용"
+                : $"Apply <color={ColorUtils.GetRealColor(false).ToHex()}>Ice Planet</color> Color To Image"
                 ) + $"  <color=grey>{(Settings.blueColor ? "O" : "Ⅹ")}</color>",
                 labelStyle);
             bool blueColorChange = Settings.blueColor != blueColor;
             if (redChange)
             {
                 Settings.redSize = redSize;
-                scrController.instance.redPlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().transform.localScale = new Vector2(redSize, redSize);
+                scrController.instance.redPlanet.GetOrAddRenderer().transform.localScale = new Vector2(redSize, redSize);
             }
             if (blueChange)
             {
                 Settings.blueSize = blueSize;
-                scrController.instance.bluePlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().transform.localScale = new Vector2(blueSize, blueSize);
+                scrController.instance.bluePlanet.GetOrAddRenderer().transform.localScale = new Vector2(blueSize, blueSize);
             }
             if (redColorChange)
             {
                 Settings.redColor = redColor;
                 if (redColor)
-                    scrController.instance.redPlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = ColorUtils.GetColor(true);
+                    scrController.instance.redPlanet.GetOrAddRenderer().color = ColorUtils.GetRealColor(true);
                 else
-                    scrController.instance.redPlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = Color.white;
+                    scrController.instance.redPlanet.GetOrAddRenderer().color = Color.white;
             }
             if (blueColorChange)
             {
                 Settings.blueColor = blueColor;
                 if (blueColor)
-                    scrController.instance.bluePlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = ColorUtils.GetColor(false);
+                    scrController.instance.bluePlanet.GetOrAddRenderer().color = ColorUtils.GetRealColor(false);
                 else
-                    scrController.instance.bluePlanet.transform.GetComponentsInChildren<SpriteRenderer>().Last().color = Color.white;
+                    scrController.instance.bluePlanet.GetOrAddRenderer().color = Color.white;
             }
 
             if (ADOBase.hasTaroDLC && ADOBase.ownsTaroDLC)
@@ -187,19 +194,19 @@ namespace PlanetTweaks
                 GUILayout.Space(10);
                 bool thirdColor = GUILayout.Toggle(Settings.thirdColor,
                     (RDString.language == SystemLanguage.Korean
-                    ? $"<color={Settings.ThirdColor().ToHex()}>세번째 행성</color> 색을 이미지에 적용"
-                    : $"Apply <color={Settings.ThirdColor().ToHex()}>Third Planet</color> Color To Image"
+                    ? $"<color={ColorUtils.GetRealThirdColor().ToHex()}>세번째 행성</color> 색을 이미지에 적용"
+                    : $"Apply <color={ColorUtils.GetRealThirdColor().ToHex()}>Third Planet</color> Color To Image"
                     ) + $"  <color=grey>{(Settings.thirdColor ? "O" : "Ⅹ")}</color>",
                     labelStyle);
                 bool thirdColorChange = Settings.thirdColor != thirdColor;
                 GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(RDString.language == SystemLanguage.Korean ? $"<color={Settings.ThirdColor().ToHex()}>세번째 행성 색</color>" : $"<color={Settings.ThirdColor().ToHex()}>Third Planet Color</color>");
+                GUILayout.Label(RDString.language == SystemLanguage.Korean ? $"<color={ColorUtils.GetRealThirdColor().ToHex()}>세번째 행성 색</color>" : $"<color={ColorUtils.GetRealThirdColor().ToHex()}>Third Planet Color</color>");
                 GUILayout.Space(10);
                 Settings.thirdColorType = GUILayout.Toolbar(Settings.thirdColorType,
                     RDString.language == SystemLanguage.Korean
-                    ? new string[] { "<color=4CB200>기본</color>", $"<color={ColorUtils.GetColor(true).ToHex()}>불 행성</color>", $"<color={ColorUtils.GetColor(false).ToHex()}>얼음 행성</color>", $"<color={Settings.CustomThirdColor().ToHex()}>커스텀</color>" }
-                    : new string[] { "<color=4CB200>Default</color>", $"<color={ColorUtils.GetColor(true).ToHex()}>Fire Planet</color>", $"<color={ColorUtils.GetColor(false).ToHex()}>Ice Planet</color>", $"<color={Settings.CustomThirdColor().ToHex()}>Custom</color>" });
+                    ? new string[] { $"<color={ColorUtils.GetRealDefaultThirdColor().ToHex()}>기본</color>", $"<color={ColorUtils.GetRealColor(true).ToHex()}>불 행성</color>", $"<color={ColorUtils.GetRealColor(false).ToHex()}>얼음 행성</color>", $"<color={ColorUtils.GetCustomThirdColor().ToHex()}>커스텀</color>" }
+                    : new string[] { $"<color={ColorUtils.GetRealDefaultThirdColor().ToHex()}>Default</color>", $"<color={ColorUtils.GetRealColor(true).ToHex()}>Fire Planet</color>", $"<color={ColorUtils.GetRealColor(false).ToHex()}>Ice Planet</color>", $"<color={ColorUtils.GetCustomThirdColor().ToHex()}>Custom</color>" });
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 GUILayout.Space(5);
@@ -213,27 +220,70 @@ namespace PlanetTweaks
                 Settings.thirdColorBlue = int.TryParse(GUILayout.TextField(Settings.thirdColorBlue.ToString()), out v) ? v : Settings.thirdColorBlue;
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
-                if (scrController.instance.allPlanets[2].GetPlanetColor(default) != Settings.ThirdColor())
-                {
-                    scrController.instance.allPlanets[2].SetPlanetColor(Settings.ThirdColor());
-                    scrController.instance.allPlanets[2].SetTailColor(Settings.ThirdColor());
-                }
+                ColorUtils.SetThirdColor();
 
                 if (thirdChange)
                 {
                     Settings.thirdSize = thirdSize;
-                    scrController.instance.allPlanets[2].transform.GetComponentsInChildren<SpriteRenderer>().Last().transform.localScale = new Vector2(thirdSize, thirdSize);
+                    scrController.instance.allPlanets[2].GetOrAddRenderer().transform.localScale = new Vector2(thirdSize, thirdSize);
                 }
                 if (thirdColorChange)
                 {
                     Settings.thirdColor = thirdColor;
                     if (thirdColor)
-                        scrController.instance.allPlanets[2].transform.GetComponentsInChildren<SpriteRenderer>().Last().color = Settings.ThirdColor();
+                        scrController.instance.allPlanets[2].GetOrAddRenderer().color = ColorUtils.GetRealThirdColor();
                     else
-                        scrController.instance.allPlanets[2].transform.GetComponentsInChildren<SpriteRenderer>().Last().color = Color.white;
+                        scrController.instance.allPlanets[2].GetOrAddRenderer().color = Color.white;
                 }
             }
+
+            GUILayout.Space(60);
+            GUILayout.Label($"<size=20>{(RDString.language == SystemLanguage.Korean ? "기타 설정" : "Extra Settings")}</size>", labelStyle);
+            GUILayout.Space(10);
+            if (Settings.shapedRotation = GUILayout.Toggle(Settings.shapedRotation, RDString.language == SystemLanguage.Korean ? "도형 모양 행성 회전" : "Shaped Planet Rotation"))
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(10);
+                GUILayout.BeginVertical();
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(RDString.language == SystemLanguage.Korean ? "꼭짓점 수" : "Vertices");
+                GUILayout.Space(5);
+                if (int.TryParse(GUILayout.TextField(Settings.shapedAngle.ToString()), out int vertices) && vertices > 2)
+                {
+                    Settings.shapedAngle = vertices;
+                }
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                GUILayout.Space(10);
+                if (cachedVertices != Settings.shapedAngle || !cachedTexture)
+                {
+                    cachedTexture = new Texture2D(100, 100);
+                    Vector2Int middle = new Vector2Int(50, 50);
+                    for (int i = 0; i < Settings.shapedAngle; i++)
+                    {
+                        float angle = Mathf.PI * 2 / Settings.shapedAngle * i;
+                        Vector2Int point = middle + new Vector2Int((int)(Mathf.Sin(angle) * 30), (int)(Mathf.Cos(angle) * 30));
+                        for (int j = -10; j <= 10; j++)
+                        {
+                            for (int k = -10; k <= 10; k++)
+                            {
+                                if (j * j + k * k <= 10 * 10)
+                                    cachedTexture.SetPixel(point.x + j, point.y + k, Color.black);
+                            }
+                        }
+                    }
+                    cachedTexture.Apply();
+                    cachedVertices = Settings.shapedAngle;
+                }
+                GUILayout.Label(cachedTexture);
+                GUILayout.EndVertical();
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
         }
+
+        private static int cachedVertices = -1;
+        private static Texture2D cachedTexture;
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
         {

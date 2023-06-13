@@ -104,15 +104,15 @@ namespace PlanetTweaks.Patch
                         icon.transform.position = floor.transform.position;
                         icon.transform.ScaleXY(0.7f, 0.7f);
                     }
-                    for (int i = -18; i < -6; i++)
-                        for (int j = -3; j < 4; j += 6)
-                        {
-                            GameObject obj = FloorUtils.GetFloor(j, i).gameObject;
-                            obj.GetComponent<scrFloor>().isLandable = false;
-                            obj.SetActive(false);
-                        }
-                    leftMovingFloor = FloorUtils.AddEventFloor(-3, -7, null);
-                    rightMovingFloor = FloorUtils.AddEventFloor(3, -7, null);
+                for (int i = -18; i < -6; i++)
+                    for (int j = -3; j < 4; j += 6)
+                    {
+                        GameObject obj = FloorUtils.GetFloor(j, i).gameObject;
+                        obj.GetComponent<scrFloor>().isLandable = false;
+                        obj.SetActive(false);
+                    }
+                leftMovingFloor = FloorUtils.AddEventFloor(-3, -7, null);
+                rightMovingFloor = FloorUtils.AddEventFloor(3, -7, null);
                 GameObject inputField = Object.Instantiate(Main.Bundle.LoadAsset<GameObject>("InputField"));
                 inputField.AddComponent<RenameInputField>();
             }

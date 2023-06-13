@@ -14,26 +14,18 @@ namespace PlanetTweaks.Patch
         {
             if (__instance.transform.Find("PlanetTweaksRenderer"))
                 return;
-            GameObject obj = new GameObject("PlanetTweaksRenderer");
-            obj.AddComponent<RendererController>();
-            var renderer = obj.AddComponent<SpriteRenderer>();
-            renderer.sortingOrder = __instance.sprite.sortingOrder + 1;
-            renderer.sortingLayerID = __instance.faceDetails.sortingLayerID;
-            renderer.sortingLayerName = __instance.faceDetails.sortingLayerName;
-            renderer.transform.parent = __instance.transform;
+            SpriteRenderer renderer = Sprites.GetOrAddRenderer(__instance);
             if (__instance.isRed)
             {
                 renderer.transform.localScale = new Vector3(Main.Settings.redSize, Main.Settings.redSize);
                 if (Main.Settings.redColor)
-                    renderer.color = ColorUtils.GetColor(true);
-                Main.Logger.Log("RedPlanet " + __instance.name);
+                    renderer.color = ColorUtils.GetRealColor(true);
             }
             else if (!__instance.isExtra)
             {
                 renderer.transform.localScale = new Vector3(Main.Settings.blueSize, Main.Settings.blueSize);
                 if (Main.Settings.blueColor)
-                    renderer.color = ColorUtils.GetColor(false);
-                Main.Logger.Log("BluePlanet " + __instance.name);
+                    renderer.color = ColorUtils.GetRealColor(false);
             }
         }
     }
@@ -51,8 +43,7 @@ namespace PlanetTweaks.Patch
                 else
                 {
                     Sprites.ThirdSelected = Sprites.ThirdSelected;
-                    __instance.SetPlanetColor(Main.Settings.ThirdColor());
-                    __instance.SetTailColor(Main.Settings.ThirdColor());
+                    ColorUtils.SetThirdColor();
                 }
         }
     }
@@ -64,42 +55,13 @@ namespace PlanetTweaks.Patch
         public static void Postfix()
         {
             Sprites.ThirdSelected = Sprites.ThirdSelected;
-            scrController.instance.allPlanets[2].SetPlanetColor(Main.Settings.ThirdColor());
-            scrController.instance.allPlanets[2].SetTailColor(Main.Settings.ThirdColor());
-            SpriteRenderer renderer = scrController.instance.allPlanets[2].transform.GetComponentsInChildren<SpriteRenderer>().Last();
+            ColorUtils.SetThirdColor();
+            SpriteRenderer renderer = scrController.instance.allPlanets[2].GetOrAddRenderer();
             renderer.transform.localScale = new Vector3(Main.Settings.thirdSize, Main.Settings.thirdSize);
             if (Main.Settings.thirdColor)
-                renderer.color = Main.Settings.ThirdColor();
+                renderer.color = ColorUtils.GetThirdColor();
             else
                 renderer.color = Color.white;
-        }
-    }
-
-    [HarmonyPatch(typeof(scrPlanet), "DisableParticles")]
-    public static class DisableParticlesPatch
-    {
-        public static void Postfix(scrPlanet __instance)
-        {
-            if (__instance.dummyPlanets)
-                Object.Destroy(__instance.GetComponentsInChildren<SpriteRenderer>().Last());
-        }
-    }
-
-    [HarmonyPatch(typeof(scrPlanet), "Destroy")]
-    public static class PlanetDestroyPatch
-    {
-        public static void Postfix(scrPlanet __instance)
-        {
-            __instance.transform.GetComponentsInChildren<SpriteRenderer>().Last().enabled = false;
-        }
-    }
-
-    [HarmonyPatch(typeof(scrPlanet), "Die")]
-    public static class PlanetDiePatch
-    {
-        public static void Postfix(scrPlanet __instance)
-        {
-            __instance.transform.GetComponentsInChildren<SpriteRenderer>().Last().enabled = false;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace PlanetTweaks.Components
         private void Awake()
         {
             planet = GetComponentInParent<scrPlanet>();
-            renderer = GetComponent<SpriteRenderer>();
+            renderer = planet.GetOrAddRenderer();
         }
 
         private void Update()
@@ -18,9 +18,16 @@ namespace PlanetTweaks.Components
             if (!planet)
                 planet = GetComponentInParent<scrPlanet>();
             if (!renderer)
-                renderer = GetComponent<SpriteRenderer>();
+                renderer = planet.GetOrAddRenderer();
             if (planet && renderer)
+            {
+                if (planet.dummyPlanets)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
                 renderer.enabled = planet.sprite.enabled;
+            }
         }
     }
 }
