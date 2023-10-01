@@ -35,7 +35,7 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix(scrPlanet __instance)
         {
-            if (__instance.sprite.enabled)
+            if (__instance.sprite.visible)
                 if (__instance.isRed)
                     Sprites.RedSelected = Sprites.RedSelected;
                 else if (!__instance.isExtra)

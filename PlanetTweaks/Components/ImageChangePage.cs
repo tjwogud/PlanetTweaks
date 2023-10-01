@@ -112,7 +112,6 @@ namespace PlayTweaks.Components
             },
             delegate
             {
-                RDUtils.SetGarbageCollectionEnabled(true);
                 scrController.instance.Set("exitingToMainMenu", true);
                 Destroy();
                 GCS.sceneToLoad = GCNS.sceneLevelSelect;

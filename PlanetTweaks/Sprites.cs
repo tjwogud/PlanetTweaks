@@ -26,7 +26,7 @@ namespace PlanetTweaks
                 GameObject obj = new GameObject("PlanetTweaksRenderer");
                 obj.AddComponent<RendererController>();
                 renderer = obj.AddComponent<SpriteRenderer>();
-                renderer.sortingOrder = planet.sprite.sortingOrder + 1;
+                renderer.sortingOrder = planet.sprite.Get<SpriteRenderer>("meshRenderer").sortingOrder + 1;
                 renderer.sortingLayerID = planet.faceDetails.sortingLayerID;
                 renderer.sortingLayerName = planet.faceDetails.sortingLayerName;
                 renderer.transform.SetParent(planet.transform);

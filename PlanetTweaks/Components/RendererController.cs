@@ -26,7 +26,7 @@ namespace PlanetTweaks.Components
                     Destroy(gameObject);
                     return;
                 }
-                renderer.enabled = planet.sprite.enabled;
+                renderer.enabled = planet.sprite.visible;
             }
         }
     }
