@@ -71,7 +71,7 @@ namespace PlanetTweaks
                 labelStyle = new GUIStyle(GUI.skin.label);
                 labelStyle.fontStyle = FontStyle.Bold;
             }
-            GUILayout.Label(RDString.language == SystemLanguage.Korean ? "이미지 폴더 경로" : "Image Directory Path", labelStyle);
+            GUILayout.Label(RDString.language == SystemLanguage.Korean ? "이미지 저장 폴더 경로" : "Image Directory Path", labelStyle);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(RDString.language == SystemLanguage.Korean ? "폴더 변경" : "Change"))
             {
@@ -126,16 +126,16 @@ namespace PlanetTweaks
             GUILayout.Space(10);
             bool redColor = GUILayout.Toggle(Settings.redColor,
                 (RDString.language == SystemLanguage.Korean
-                ? $"<color={ColorUtils.GetRealColor(true).ToHex()}>불 행성</color> 색을 이미지에 적용"
-                : $"Apply <color={ColorUtils.GetRealColor(true).ToHex()}>Fire Planet</color> Color To Image"
+                ? $"<color={ColorUtils.GetRealColor(true).Hex()}>불 행성</color> 색을 이미지에 적용"
+                : $"Apply <color={ColorUtils.GetRealColor(true).Hex()}>Fire Planet</color> Color To Image"
                 ) + $"  <color=grey>{(Settings.redColor ? "O" : "Ⅹ")}</color>",
                 labelStyle);
             bool redColorChange = Settings.redColor != redColor;
             GUILayout.Space(5);
             bool blueColor = GUILayout.Toggle(Settings.blueColor,
                 (RDString.language == SystemLanguage.Korean
-                ? $"<color={ColorUtils.GetRealColor(false).ToHex()}>얼음 행성</color> 색을 이미지에 적용"
-                : $"Apply <color={ColorUtils.GetRealColor(false).ToHex()}>Ice Planet</color> Color To Image"
+                ? $"<color={ColorUtils.GetRealColor(false).Hex()}>얼음 행성</color> 색을 이미지에 적용"
+                : $"Apply <color={ColorUtils.GetRealColor(false).Hex()}>Ice Planet</color> Color To Image"
                 ) + $"  <color=grey>{(Settings.blueColor ? "O" : "Ⅹ")}</color>",
                 labelStyle);
             bool blueColorChange = Settings.blueColor != blueColor;
@@ -194,19 +194,19 @@ namespace PlanetTweaks
                 GUILayout.Space(10);
                 bool thirdColor = GUILayout.Toggle(Settings.thirdColor,
                     (RDString.language == SystemLanguage.Korean
-                    ? $"<color={ColorUtils.GetRealThirdColor().ToHex()}>세번째 행성</color> 색을 이미지에 적용"
-                    : $"Apply <color={ColorUtils.GetRealThirdColor().ToHex()}>Third Planet</color> Color To Image"
+                    ? $"<color={ColorUtils.GetRealThirdColor().Hex()}>세번째 행성</color> 색을 이미지에 적용"
+                    : $"Apply <color={ColorUtils.GetRealThirdColor().Hex()}>Third Planet</color> Color To Image"
                     ) + $"  <color=grey>{(Settings.thirdColor ? "O" : "Ⅹ")}</color>",
                     labelStyle);
                 bool thirdColorChange = Settings.thirdColor != thirdColor;
                 GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(RDString.language == SystemLanguage.Korean ? $"<color={ColorUtils.GetRealThirdColor().ToHex()}>세번째 행성 색</color>" : $"<color={ColorUtils.GetRealThirdColor().ToHex()}>Third Planet Color</color>");
+                GUILayout.Label(RDString.language == SystemLanguage.Korean ? $"<color={ColorUtils.GetRealThirdColor().Hex()}>세번째 행성 색</color>" : $"<color={ColorUtils.GetRealThirdColor().Hex()}>Third Planet Color</color>");
                 GUILayout.Space(10);
                 Settings.thirdColorType = GUILayout.Toolbar(Settings.thirdColorType,
                     RDString.language == SystemLanguage.Korean
-                    ? new string[] { $"<color={ColorUtils.GetRealDefaultThirdColor().ToHex()}>기본</color>", $"<color={ColorUtils.GetRealColor(true).ToHex()}>불 행성</color>", $"<color={ColorUtils.GetRealColor(false).ToHex()}>얼음 행성</color>", $"<color={ColorUtils.GetCustomThirdColor().ToHex()}>커스텀</color>" }
-                    : new string[] { $"<color={ColorUtils.GetRealDefaultThirdColor().ToHex()}>Default</color>", $"<color={ColorUtils.GetRealColor(true).ToHex()}>Fire Planet</color>", $"<color={ColorUtils.GetRealColor(false).ToHex()}>Ice Planet</color>", $"<color={ColorUtils.GetCustomThirdColor().ToHex()}>Custom</color>" });
+                    ? new string[] { $"<color={ColorUtils.GetRealDefaultThirdColor().Hex()}>기본</color>", $"<color={ColorUtils.GetRealColor(true).Hex()}>불 행성</color>", $"<color={ColorUtils.GetRealColor(false).Hex()}>얼음 행성</color>", $"<color={ColorUtils.GetCustomThirdColor().Hex()}>커스텀</color>" }
+                    : new string[] { $"<color={ColorUtils.GetRealDefaultThirdColor().Hex()}>Default</color>", $"<color={ColorUtils.GetRealColor(true).Hex()}>Fire Planet</color>", $"<color={ColorUtils.GetRealColor(false).Hex()}>Ice Planet</color>", $"<color={ColorUtils.GetCustomThirdColor().Hex()}>Custom</color>" });
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 GUILayout.Space(5);

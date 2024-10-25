@@ -146,19 +146,19 @@ namespace PlayTweaks.Components
                     if (RDString.language == SystemLanguage.Korean)
                     {
                         if (scrController.instance.chosenplanet.isRed)
-                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(true).ToHex() + ">불 행성</color> 선택됨";
+                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(true).Hex() + ">불 행성</color> 선택됨";
                         else if (!scrController.instance.chosenplanet.isExtra)
-                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(false).ToHex() + ">얼음 행성</color> 선택됨";
+                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(false).Hex() + ">얼음 행성</color> 선택됨";
                         else
-                            instance.planetText.text = "<color=" + ColorUtils.GetRealThirdColor().ToHex() + ">세번째 행성</color> 선택됨";
+                            instance.planetText.text = "<color=" + ColorUtils.GetRealThirdColor().Hex() + ">세번째 행성</color> 선택됨";
                     }
-                    {
+                    else {
                         if (scrController.instance.chosenplanet.isRed)
-                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(true).ToHex() + ">Fire Planet</color> Selected";
+                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(true).Hex() + ">Fire Planet</color> Selected";
                         else if (!scrController.instance.chosenplanet.isExtra)
-                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(false).ToHex() + ">Ice Planet</color> Selected";
+                            instance.planetText.text = "<color=" + ColorUtils.GetRealColor(false).Hex() + ">Ice Planet</color> Selected";
                         else
-                            instance.planetText.text = "<color=" + ColorUtils.GetRealThirdColor().ToHex() + ">Third Planet</color> Selected";
+                            instance.planetText.text = "<color=" + ColorUtils.GetRealThirdColor().Hex() + ">Third Planet</color> Selected";
                     }
                     instance.UpdateFloorIcons();
                     scrUIController.instance.WipeFromBlack();
@@ -431,9 +431,9 @@ namespace PlayTweaks.Components
             planetText = new GameObject().AddComponent<TextMesh>();
             planetText.richText = true;
             if (RDString.language == SystemLanguage.Korean)
-                planetText.text = "<color=" + ColorUtils.GetRealColor(true).ToHex() + ">불 행성</color> 선택됨";
+                planetText.text = "<color=" + ColorUtils.GetRealColor(true).Hex() + ">불 행성</color> 선택됨";
             else
-                planetText.text = "<color=" + ColorUtils.GetRealColor(true).ToHex() + ">Fire Planet</color> Selected";
+                planetText.text = "<color=" + ColorUtils.GetRealColor(true).Hex() + ">Fire Planet</color> Selected";
             planetText.SetLocalizedFont();
             planetText.fontSize = 100;
             planetText.anchor = TextAnchor.UpperCenter;

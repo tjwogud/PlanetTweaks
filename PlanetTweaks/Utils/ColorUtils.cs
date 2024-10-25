@@ -120,5 +120,15 @@ namespace PlanetTweaks.Utils
         {
             return new Color((float)Main.Settings.thirdColorRed / 255, (float)Main.Settings.thirdColorGreen / 255, (float)Main.Settings.thirdColorBlue / 255);
         }
+
+        public static string Hex(this Color c, bool useAlpha = false, bool hash = true)
+        {
+            return $"{(hash ? "#" : "")}{ToByte(c.r):X2}{ToByte(c.g):X2}{ToByte(c.b):X2}{(useAlpha ? $"{ToByte(c.a)}:X2" : "")}";
+        }
+
+        private static byte ToByte(float f)
+        {
+            return (byte)(Mathf.Clamp01(f) * 255f);
+        }
     }
 }

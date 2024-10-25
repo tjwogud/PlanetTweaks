@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ADOFAI.ModdingConvenience;
+using HarmonyLib;
 using PlanetTweaks.Components;
 using PlanetTweaks.Utils;
 using PlayTweaks.Components;
@@ -43,7 +44,12 @@ namespace PlanetTweaks.Patch
                 var exitFloor = FloorUtils.AddFloor(-13.9f, -5.65f);
                 exitFloor.transform.ScaleXY(0.5f, 0.5f);
                 exitFloor.isportal = true;
-                exitFloor.dontChangeMySprite = true;
+                exitFloor.floorRenderer.sortingOrder = 0;
+                {
+                    var particle = Object.Instantiate(PrefabLibrary.instance.lastTilePortalPrefab, exitFloor.transform);
+                    particle.Method("Start");
+                    Object.Destroy(particle);
+                }
 
                 var images = new GameObject();
                 images.name = "PlanetTweaks_Images";
@@ -57,7 +63,13 @@ namespace PlanetTweaks.Patch
                         floor.transform.ScaleXY(0.8f, 0.8f);
                         floor.dontChangeMySprite = true;
                         if (j == 5 && i == 3)
+                        {
                             floor.isportal = true;
+                            floor.floorRenderer.sortingOrder = 0;
+                            var particle = Object.Instantiate(PrefabLibrary.instance.lastTilePortalPrefab, floor.transform);
+                            particle.Method("Start");
+                            Object.Destroy(particle);
+                        }
                         else
                         {
                             floor.floorRenderer.renderer.sortingOrder = 1;
