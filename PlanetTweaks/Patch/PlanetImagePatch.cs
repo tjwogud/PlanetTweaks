@@ -1,9 +1,6 @@
 ﻿using HarmonyLib;
-using PlanetTweaks.Components;
 using PlanetTweaks.Utils;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace PlanetTweaks.Patch
 {
@@ -12,6 +9,8 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix(scrPlanet __instance)
         {
+            if (__instance.dummyPlanets)
+                return;
             if (__instance.transform.Find("PlanetTweaksRenderer"))
                 return;
             SpriteRenderer renderer = Sprites.GetOrAddRenderer(__instance);
@@ -35,6 +34,8 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix(scrPlanet __instance)
         {
+            if (__instance.dummyPlanets)
+                return;
             if (__instance.sprite.visible)
                 if (__instance.isRed)
                     Sprites.RedSelected = Sprites.RedSelected;

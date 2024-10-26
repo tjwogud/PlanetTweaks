@@ -1,10 +1,8 @@
 ﻿using HarmonyLib;
-using PlanetTweaks.Patch;
 using PlanetTweaks.Utils;
 using PlayTweaks.Components;
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityModManagerNet;

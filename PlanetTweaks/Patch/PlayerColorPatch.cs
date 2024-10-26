@@ -1,8 +1,6 @@
 ﻿using HarmonyLib;
 using PlanetTweaks.Utils;
 using System;
-using System.Linq;
-using UnityEngine;
 
 namespace PlanetTweaks.Patch
 {
