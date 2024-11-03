@@ -39,8 +39,8 @@ namespace PlanetTweaks.Utils
         {
             if (scrController.instance.levelName == "T5-X" && GCS.enableCutsceneT5)
                 return;
-            scrPlanet planet = scrController.instance?.allPlanets[2];
-            if (!planet || !planet.sprite.visible)
+            scrPlanet planet = PlanetUtils.GetThirdPlanet();
+            if (!planet)
                 return;
             if (c == null)
                 c = GetThirdColor();

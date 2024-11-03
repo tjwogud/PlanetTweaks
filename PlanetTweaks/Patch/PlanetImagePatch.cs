@@ -9,7 +9,7 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix(scrPlanet __instance)
         {
-            if (__instance.dummyPlanets)
+            if (__instance.dummyPlanets || __instance.objectDecoration)
                 return;
             if (__instance.transform.Find("PlanetTweaksRenderer"))
                 return;
@@ -34,7 +34,7 @@ namespace PlanetTweaks.Patch
     {
         public static void Postfix(scrPlanet __instance)
         {
-            if (__instance.dummyPlanets)
+            if (__instance.dummyPlanets || __instance.objectDecoration)
                 return;
             if (__instance.sprite.visible)
                 if (__instance.isRed)
@@ -51,13 +51,14 @@ namespace PlanetTweaks.Patch
 
     [HarmonyPatch(typeof(scrController), "Awake")]
     [HarmonyPatch(typeof(scrController), "ColorPlanets")]
+    [HarmonyPatch(typeof(scrController), "SetNumPlanets")]
     public static class ThirdPlanetPatch
     {
         public static void Postfix()
         {
             Sprites.ThirdSelected = Sprites.ThirdSelected;
             ColorUtils.SetThirdColor();
-            SpriteRenderer renderer = scrController.instance.allPlanets[2].GetOrAddRenderer();
+            SpriteRenderer renderer = PlanetUtils.GetThirdPlanet().GetOrAddRenderer();
             renderer.transform.localScale = new Vector3(Main.Settings.thirdSize, Main.Settings.thirdSize);
             if (Main.Settings.thirdColor)
                 renderer.color = ColorUtils.GetThirdColor();

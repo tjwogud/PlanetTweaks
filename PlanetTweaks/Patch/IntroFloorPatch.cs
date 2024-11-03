@@ -30,10 +30,10 @@ namespace PlanetTweaks.Patch
                         floor.numPlanets = 3;
                         scrController.instance.redPlanet.currfloor = floor;
                         scrController.instance.bluePlanet.currfloor = floor;
-                        scrController.instance.allPlanets[2].currfloor = floor;
+                        PlanetUtils.GetThirdPlanet().currfloor = floor;
                         scrController.instance.redPlanet.Set("endingTween", 1);
                         scrController.instance.bluePlanet.Set("endingTween", 1);
-                        scrController.instance.allPlanets[2].Set("endingTween", 1);
+                        PlanetUtils.GetThirdPlanet().Set("endingTween", 1);
                     }
                 }, parent: GameObject.Find("outer ring").transform))
                     return;

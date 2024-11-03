@@ -223,15 +223,15 @@ namespace PlanetTweaks
                 if (thirdChange)
                 {
                     Settings.thirdSize = thirdSize;
-                    scrController.instance.allPlanets[2].GetOrAddRenderer().transform.localScale = new Vector2(thirdSize, thirdSize);
+                    PlanetUtils.GetThirdPlanet().GetOrAddRenderer().transform.localScale = new Vector2(thirdSize, thirdSize);
                 }
                 if (thirdColorChange)
                 {
                     Settings.thirdColor = thirdColor;
                     if (thirdColor)
-                        scrController.instance.allPlanets[2].GetOrAddRenderer().color = ColorUtils.GetRealThirdColor();
+                        PlanetUtils.GetThirdPlanet().GetOrAddRenderer().color = ColorUtils.GetRealThirdColor();
                     else
-                        scrController.instance.allPlanets[2].GetOrAddRenderer().color = Color.white;
+                        PlanetUtils.GetThirdPlanet().GetOrAddRenderer().color = Color.white;
                 }
             }
 

@@ -85,7 +85,7 @@ namespace PlanetTweaks
             set
             {
                 thirdPreview = value;
-                var planet = scrController.instance?.allPlanets[2];
+                var planet = PlanetUtils.GetThirdPlanet();
                 if (planet == null)
                     return;
                 Apply(planet, value ?? ThirdSprite);
@@ -191,7 +191,7 @@ namespace PlanetTweaks
 
             set
             {
-                var planet = scrController.instance?.allPlanets[2];
+                var planet = PlanetUtils.GetThirdPlanet();
                 if (value < 0)
                 {
                     Main.Settings.thirdSelected = null;
